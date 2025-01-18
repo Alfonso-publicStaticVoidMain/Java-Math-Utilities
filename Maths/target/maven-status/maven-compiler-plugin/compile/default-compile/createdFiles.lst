@@ -1,0 +1,9 @@
+mainpackage\Rational.class
+mainpackage\RealMonomial.class
+mainpackage\Complex.class
+mainpackage\RationalFunction.class
+mainpackage\RealMatrix.class
+mainpackage\TestClass.class
+mainpackage\CalcUtil.class
+mainpackage\RealPolynomial.class
+mainpackage\RealNumber.class
