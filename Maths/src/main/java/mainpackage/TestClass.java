@@ -35,9 +35,9 @@ public class TestClass {
 //        System.out.println("A*b = ");
 //        (A.mult(RealMatrix.colVector(b))).printMatrix();
 
+        System.out.println(Arrays.toString(CalcUtil.partitionInterval(0, 1, 10)));
 
-
-        CalcUtil.analyticVsNumericalDerivative(new RealPolynomial(3, 2, -4, -1, 3, -1, 2), -20, 20, 0.1, 1e-2, 2, 5);
+        //CalcUtil.analyticVsNumericalDerivative(new RealPolynomial(3, 2, -4, -1, 3, -1, 2), -20, 20, 0.1, 1e-2, 2, 5);
     }
     
 }

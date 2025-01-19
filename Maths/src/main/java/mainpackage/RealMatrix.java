@@ -1,5 +1,6 @@
 package mainpackage;
 
+import java.util.Arrays;
 import java.util.function.Function;
 
 public class RealMatrix {
@@ -183,8 +184,11 @@ public class RealMatrix {
     }
     
     /*
-    * Multiplies A to this matrix.
+    * Returns the result of multiplying A to this matrix.
     * If dimensions aren't compatible, an empty matrix is returned.
+    * For dimensions to be compatible, the number of columns of this must
+    * be equal to the number of rows of A. If that happens, the returned matrix
+    * will have dimension this.rows x A.cols.
     */
     public RealMatrix mult(RealMatrix A) {
         if (this.cols != A.rows) return new RealMatrix();
@@ -199,9 +203,11 @@ public class RealMatrix {
     
     // Passes a double[] array to a row matrix.
     public static RealMatrix rowVector(double[] vector) {
-        double[][] result = new double[1][vector.length];
-        for (int i = 0; i < vector.length; i++) result[0][i] = vector[i];
-        return new RealMatrix(result);
+        return new RealMatrix(new double[][] {Arrays.copyOf(vector, vector.length)});
+        // Old version stays commented while newer one is pending tests
+//        double[][] result = new double[1][vector.length];
+//        for (int i = 0; i < vector.length; i++) result[0][i] = vector[i];
+//        return new RealMatrix(result);
     }
     
     // Passes a double[] array to a column matrix.

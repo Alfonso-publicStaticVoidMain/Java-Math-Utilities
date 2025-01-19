@@ -594,42 +594,66 @@ public class CalcUtil {
     */
     
     // Applies a function f: T -> U to a List or array of class T, returning a List of class U.
-    public static <T, U> List<U> applyFunction(List<T> targetArray, BiFunction<T, Integer, U> f) {
+    public static <T, U> List<U> applyFunction(
+        List<T> targetArray,
+        BiFunction<T, Integer, U> f
+    ) {
         List<U> result = new LinkedList<>();
         for (int i = 0; i < targetArray.size(); i++) result.add(f.apply(targetArray.get(i), i));
         return result;
     }
-    public static <T, U> List<U> applyFunction(T[] targetArray, BiFunction<T, Integer, U> f) {
+    public static <T, U> List<U> applyFunction(
+        T[] targetArray,
+        BiFunction<T, Integer, U> f
+    ) {
         List<U> result = new LinkedList<>();
         for (int i = 0; i < targetArray.length; i++) result.add(f.apply(targetArray[i], i));
         return result;
     }
-    public static <T, U> List<U> applyFunction(List<T> targetArray, Function<T, U> f) {
+    public static <T, U> List<U> applyFunction(
+        List<T> targetArray,
+        Function<T, U> f
+    ) {
         List<U> result = new LinkedList<>();
         for (T t : targetArray) result.add(f.apply(t));
         return result;
     }
-    public static <T, U> List<U> applyFunction(T[] targetArray, Function<T, U> f) {
+    public static <T, U> List<U> applyFunction(
+        T[] targetArray,
+        Function<T, U> f
+    ) {
         List<U> result = new LinkedList<>();
         for (T t : targetArray) result.add(f.apply(t));
         return result;
     }
-    public static double[] applyFunction(double[] doubleArray, BiFunction<Double, Integer, Double> f) {
+    public static double[] applyFunction(
+        double[] doubleArray,
+        BiFunction<Double, Integer, Double> f
+    ) {
         double[] result = new double[doubleArray.length];
         for (int i = 0; i < doubleArray.length; i++) result[i] = f.apply(doubleArray[i], i);
         return result;
     }
-    public static double[] applyFunction(double[] doubleArray, Function<Double, Double> f) {
+    public static double[] applyFunction(
+        double[] doubleArray,
+        Function<Double, Double> f
+    ) {
         double[] result = new double[doubleArray.length];
         for (int i = 0; i < doubleArray.length; i++) result[i] = f.apply(doubleArray[i]);
         return result;
     }
-    public static int[] applyFunction(int[] intArray, BiFunction<Integer, Integer, Integer> f) {
+    public static int[] applyFunction(
+        int[] intArray,
+        BiFunction<Integer, Integer, Integer> f
+    ) {
         int[] result = new int[intArray.length];
         for (int i = 0; i < intArray.length; i++) result[i] = f.apply(intArray[i], i);
         return result;
     }
-    public static int[] applyFunction(int[] intArray, Function<Integer, Integer> f) {
+    public static int[] applyFunction(
+        int[] intArray,
+        Function<Integer, Integer> f
+    ) {
         int[] result = new int[intArray.length];
         for (int i = 0; i < intArray.length; i++) result[i] = f.apply(intArray[i]);
         return result;
@@ -761,31 +785,47 @@ public class CalcUtil {
     ) {return applyFunctionIfCondition(intArray, (x, i) -> condition.apply(x), (x, i) -> f.apply(x));}
     
     /*
-    * Operates the first two elements of the array,
-    * then operates the result with the third, and so on...
+    * Operates the first two elements of an array/List, then operates the result
+    * with the third, and so on... then returns the last result.
     * If startAtBeginning is false, it starts operating the last two elements.
     * Will throw an error if the array is empty.
     * If the array has exactly one element, it will return that element.
     */
-    public static <T> T concatenatedOperator(T[] targetArray, BiFunction<T, T, T> operator, boolean startAtBeginning) {
+    public static <T> T concatenatedOperator(
+        T[] targetArray,
+        BiFunction<T, T, T> operator,
+        boolean startAtBeginning
+    ) {
         T t = startAtBeginning ? targetArray[0] : targetArray[targetArray.length - 1];
         if (targetArray.length > 1 && startAtBeginning) for (int i = 1; i < targetArray.length; i++) t = operator.apply(t, targetArray[i]);
         else if (targetArray.length > 1 && !startAtBeginning) for (int i = targetArray.length - 2; i >= 0; i--) t = operator.apply(t, targetArray[i]);
         return t;
     }
-    public static <T> T concatenatedOperator(List<T> targetArray, BiFunction<T, T, T> operator, boolean startAtBeginning) {
+    public static <T> T concatenatedOperator(
+        List<T> targetArray,
+        BiFunction<T, T, T> operator,
+        boolean startAtBeginning
+    ) {
         T t = startAtBeginning ? targetArray.get(0) : targetArray.get(targetArray.size() - 1);
         if (targetArray.size() > 1 && startAtBeginning) for (int i = 1; i < targetArray.size(); i++) t = operator.apply(t, targetArray.get(i));
         else if (targetArray.size() > 1 && !startAtBeginning) for (int i = targetArray.size() - 2; i >= 0; i--) t = operator.apply(t, targetArray.get(i));
         return t;
     }
-    public static double concatenatedOperator(double[] doubleArray, BiFunction<Double, Double, Double> operator, boolean startAtBeginning) {
+    public static double concatenatedOperator(
+        double[] doubleArray,
+        BiFunction<Double, Double, Double> operator,
+        boolean startAtBeginning
+    ) {
         double t = startAtBeginning ? doubleArray[0] : doubleArray[doubleArray.length - 1];
         if (doubleArray.length > 1 && startAtBeginning) for (int i = 1; i < doubleArray.length; i++) t = operator.apply(t, doubleArray[i]);
         else if (doubleArray.length > 1 && !startAtBeginning) for (int i = doubleArray.length - 2; i >= 0; i--) t = operator.apply(t, doubleArray[i]);
         return t;
     }
-    public static int concatenatedOperator(int[] intArray, BiFunction<Integer, Integer, Integer> operator, boolean startAtBeginning) {
+    public static int concatenatedOperator(
+        int[] intArray,
+        BiFunction<Integer, Integer, Integer> operator,
+        boolean startAtBeginning
+    ) {
         int t = startAtBeginning ? intArray[0] : intArray[intArray.length - 1];
         if (intArray.length > 1 && startAtBeginning) for (int i = 1; i < intArray.length; i++) t = operator.apply(t, intArray[i]);
         else if (intArray.length > 1 && !startAtBeginning) for (int i = intArray.length - 2; i >= 0; i--) t = operator.apply(t, intArray[i]);
@@ -1416,7 +1456,7 @@ public class CalcUtil {
     * matrix, b a vector and ' represent transposition. This case doesn't even
     * deserve to use gradient descent on it, since it can also be solved with
     * simple linear algebra, since the jacobian of J is Ax - b, and the minimum
-    * can only be located where the jacobian vanishes.
+    * can be located where the jacobian vanishes.
     *
     * To work with matrices, this section uses the RealMatrix class, also
     * created by me.
@@ -1465,8 +1505,100 @@ public class CalcUtil {
     
     // </editor-fold>
     
-    // <editor-fold defaultstate="collapsed" desc="EDO resolution">
+    // <editor-fold defaultstate="collapsed" desc="ODE resolution">
     // TO DO
+    
+    /*
+    * Returns an array of doubles of size n+1, with initial value initValue,
+    * final value finValue, and each inner value being equally spaced by a step
+    * of (initValue + finValue)/n.
+    */
+    public static double[] partitionInterval(double initValue, double finValue, int n) {
+        double step = (initValue + finValue) / n;
+        double[] result = new double[n+1];
+        result[0] = initValue;
+        result[n] = finValue;
+        for (int i = 1; i < n; i++) {
+            initValue += step;
+            result[i] = initValue;
+        }
+        return result;
+    }
+    
+    public static void printGraphData(double[] x, double[] y) {
+        if (x.length != y.length) return;
+        System.out.println("| x \t\t| y \t\t |");
+        for (int i = 0; i < x.length; i++) System.out.printf("| .%8f \t | .%8f \t|\n", x[i], y[i]);
+    }
+    /*
+    * Solves the fixed point problem of finding the value x such that f(x) = x,
+    * with a precision of eps, and starting to iterate on a certain initValue.
+    * maxit is the highest number of iterations the method will perform before
+    * ending.
+    */
+    public static double fixedPoint(Function<Double, Double> f, double initValue, double eps, int maxit) {
+        for (int i = 0; i <= maxit; i++) {
+            double fx = f.apply(initValue);
+            if (Math.abs(fx - initValue) < eps) return initValue;
+            initValue = fx;
+        }
+        return initValue;
+    }
+    
+    /*
+    * Solves an ODE of the form y' = f(x, y) on an interval [initValue, finValue]
+    * with initial condition y(initValue) = initCondition. Returns an array of doubles
+    * that is the approximation of the solution when evaluated on each of the
+    * elements of the double array partitionInterval(initValue, finValue, n).
+    * It follows the formula:
+    * y[i] = y[i-1] + h * f(x[i-1], y[i-1])
+    */
+    public static double[] forwardEulerMethod(
+        BiFunction<Double, Double, Double> f,   // Function of our ODE y' = f(x, y)
+        double initValue,                       // Initial value to begin approximating our solution y
+        double finValue,                        // Final value to end approximating out solution y
+        double initCondition,                   // Condition, such that f(initValue) = initCondition
+        int n                                   // Number of sections to divide out interval into
+    ) {
+        double[] x = partitionInterval(initValue, finValue, n);
+        double step = (initValue + finValue) / n;
+        double[] y = new double[n+1];
+        y[0] = initCondition;
+        for (int i = 1; i <= n; i++) {
+            y[i] = y[i-1] + step * f.apply(x[i-1], y[i-1]);
+        }
+        return y;
+    }
+    
+    /*
+    * Solves an ODE of the form y' = f(x, y) on an interval [initValue, finValue]
+    * with initial condition y(initValue) = initCondition. Returns an array of doubles
+    * that is the approximation of the solution when evaluated on each of the
+    * elements of the double array partitionInterval(initValue, finValue, n).
+    * It follows the formula:
+    * y[i] = y[i-1] + h * f(x[i], y[i])
+    * Since y[i] appears in the calculation of itself, on each iteration a fixed
+    * point problem will be solved, applied to the function:
+    * z -> y[i-1] + h * f(x[i], z)
+    */
+    public double[] backwardEulerMethod(
+        BiFunction<Double, Double, Double> f,   // Function of our ODE y' = f(x, y)
+        double initValue,                       // Initial value to begin approximating our solution y
+        double finValue,                        // Final value to end approximating out solution y
+        double initCondition,                   // Condition, such that f(initValue) = initCondition
+        int n                                   // Number of sections to divide out interval into
+    ) {
+        double[] x = partitionInterval(initValue, finValue, n);
+        double step = (initValue + finValue) / n;
+        double[] y = new double[n+1];
+        y[0] = initCondition;
+        for (int i = 1; i <= n; i++) {
+            int j = i;
+            Function<Double, Double> fixedPointFunction = z -> y[j-1] + step * f.apply(x[j], z);
+            y[i] = fixedPoint(fixedPointFunction, x[i], 1e-6, 10000);
+        }
+        return y;
+    }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Lineal Algebra">

@@ -50,7 +50,7 @@ public class RealPolynomial {
     /*
     * Returns the coefficient in the i-th position.
     * If i is negative, returns NaN.
-    * If i is greater than the degree of the polynomial, returns 0.
+    * If i is greater than the degree of the polynomial, always returns 0.
     */
     public double getCoefficient(int i) {
         if (i < 0) return Double.NaN;
