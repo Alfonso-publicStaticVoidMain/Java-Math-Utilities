@@ -9,9 +9,6 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class CalcUtil {
-    // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    
-    
     /*
     * Hello! This is my CalcUtil class, designed as a repository of methods
     * to be applied to many Java classes like Strings, arrays, Lists, as well
