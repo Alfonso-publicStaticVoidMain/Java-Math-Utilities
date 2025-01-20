@@ -9,7 +9,28 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class CalcUtil {
+    /*
+    * Hello! This is my CalcUtil class, designed as a repository of methods
+    * to be applied to many Java classes like Strings, arrays, Lists, as well
+    * as classes created by me like RealMatrix and RealPolynomial.
+    *
+    * Each method includes a description of what it does and if needed, a brief
+    * explanation of the mathematical functioning of that method. For more complex
+    * methods, the arguments are displayed vertically to allow for better
+    * explanations of what they are and their function within the method.
+    */
     
+    
+    /*
+    * A tridimensional array of doubles to be used in the derivatives section to
+    * to estimate the derivative of a function using the finite difference mehtod.
+    * The first coordinate of the array stores the order of the derivative, the
+    * second stores the accuracy of the approximation, and the third stores the
+    * specific coefficient to be used by the method. Keep in mind that the middle
+    * value is the one that multiplies f(x), while the next one multiplies f(x+h)
+    * and the previous one f(x-h), so some care has to be taken when accesing
+    * those indexes and doing the calculations.
+    */
     private static final double[][][] finiteDifferenceCoef = new double[][][] {
         { // Derivative of oder 0 (the same function)
             {1}
@@ -61,7 +82,7 @@ public class CalcUtil {
     *   stringToIntegerList: Returns a List of Integers that contains all the digits of the String passed.
     */
     
-    // Counts the number of appearences of a given character within a given String.
+    // Counts the number of appearences of a character within a String.
     static int countChar(String str, char ch) {return str.length() - str.replace(Character.toString(ch), "").length();}
     
     /*
@@ -83,7 +104,7 @@ public class CalcUtil {
         return password;
     }
     
-    // Randomly reorders the chars in a String.
+    // Returns a random reordering of the given String.
     static String shuffle(String str) {
         StringBuilder strBuilder = new StringBuilder(str);
         String result = "";
@@ -97,7 +118,7 @@ public class CalcUtil {
     }
     
     /*
-    * Return true if the string is an integer in the given base, false otherwise.
+    * Return true if the String is an integer in the given base, false otherwise.
     * If the base is unspecified, it's assumed 10.
     */
     public static boolean isInteger(String str, int base) {
@@ -109,13 +130,7 @@ public class CalcUtil {
         }
     }
     public static boolean isInteger(String str) {return isInteger(str, 10);}
-    
-    public static List<Integer> stringToIntegerList(String str) {
-        if (!isInteger(str)) return Arrays.asList();
-        List<Integer> result = new ArrayList<>();
-        for (int i = 0; i < str.length(); i++) result.add(Integer.parseInt(Character.toString(str.charAt(i))));
-        return result;
-    }
+
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Array Index methods">
