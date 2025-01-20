@@ -674,20 +674,6 @@ public class CalcUtil {
         return result;
     }
     
-    // Applies the function f: T x Integer -> T to the elements of a T[] array and their index that satisfy the condition on their value and index. Modifies the array it's applied to
-//    public static <T, U extends T> void applyFunctionIfCondition(T[] targetArray, BiFunction<T, Integer, Boolean> condition, BiFunction<T, Integer, U> f) {
-//        for (int i = 0; i < targetArray.length; i++) if (condition.apply(targetArray[i], i)) targetArray[i] = f.apply(targetArray[i], i);
-//    }
-//    public static <T, U extends T> void applyFunctionIfCondition(List<T> targetArray, BiFunction<T, Integer, Boolean> condition, BiFunction<T, Integer, U> f) {
-//        for (int i = 0; i < targetArray.size(); i++) if (condition.apply(targetArray.get(i), i)) targetArray.set(i, f.apply(targetArray.get(i), i));
-//    }
-//    public static void applyFunctionIfCondition(double[] doubleArray, BiFunction<Double, Integer, Boolean> condition, BiFunction<Double, Integer, Double> f) {
-//        for (int i = 0; i < doubleArray.length; i++) if (condition.apply(doubleArray[i], i)) doubleArray[i] = f.apply(doubleArray[i], i);
-//    }
-//    public static void applyFunctionIfCondition(int[] intArray, BiFunction<Integer, Integer, Boolean> condition, BiFunction<Integer, Integer, Integer> f) {
-//        for (int i = 0; i < intArray.length; i++) if (condition.apply(intArray[i], i)) intArray[i] = f.apply(intArray[i], i);
-//    }
-    
     /*
     * Applies the function f: T -> U or f: T x Integer -> U to the elements of the
     * array (and their index) that satisfy the condition on their value and index,
@@ -807,8 +793,8 @@ public class CalcUtil {
     * If the array has exactly one element, it will return that element.
     */
     public static <T> T concatenatedOperator(
-        T[] targetArray,                // Array you want to operate on.
-        BiFunction<T, T, T> operator,   // Operator you want to apply to the array.
+        T[] targetArray,                // Array to operate on.
+        BiFunction<T, T, T> operator,   // Operator to apply to the array.
         boolean startAtBeginning        // State parameter. Set to true to start at the beginning of the array.
     ) {
         T t = startAtBeginning ? targetArray[0] : targetArray[targetArray.length - 1];
@@ -817,9 +803,9 @@ public class CalcUtil {
         return t;
     }
     public static <T> T concatenatedOperator(
-        List<T> targetArray,
-        BiFunction<T, T, T> operator,
-        boolean startAtBeginning
+        List<T> targetArray,            // List to operate on.
+        BiFunction<T, T, T> operator,   // Operator to apply to the List.
+        boolean startAtBeginning        // State parameter. Set to true to start at the beginning of the List.
     ) {
         T t = startAtBeginning ? targetArray.get(0) : targetArray.get(targetArray.size() - 1);
         if (targetArray.size() > 1 && startAtBeginning) for (int i = 1; i < targetArray.size(); i++) t = operator.apply(t, targetArray.get(i));
