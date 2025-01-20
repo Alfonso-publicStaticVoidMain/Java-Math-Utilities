@@ -934,6 +934,7 @@ public class CalcUtil {
             double d = numberArray[i];
             if (d == max) result.add(i);
             else if (d > max) {
+                max = d;
                 result.clear();
                 result.add(i);
             }
@@ -947,6 +948,7 @@ public class CalcUtil {
             int n = numberArray[i];
             if (n == max) result.add(i);
             else if (n > max) {
+                max = n;
                 result.clear();
                 result.add(i);
             }
@@ -968,11 +970,12 @@ public class CalcUtil {
     // Returns an int[] array of all indexes where the maximum value is found.
     public static int[] minIndexes(double[] numberArray) {
         List<Integer> result = new LinkedList<>();
-        double max = Double.MAX_VALUE;
+        double min = Double.MAX_VALUE;
         for (int i = 0; i < numberArray.length; i++) {
             double d = numberArray[i];
-            if (d == max) result.add(i);
-            else if (d < max) {
+            if (d == min) result.add(i);
+            else if (d < min) {
+                min = d;
                 result.clear();
                 result.add(i);
             }
@@ -981,11 +984,12 @@ public class CalcUtil {
     }
     public static int[] minIndexes(int[] numberArray) {
         List<Integer> result = new LinkedList<>();
-        int max = Integer.MIN_VALUE;
+        int min = Integer.MIN_VALUE;
         for (int i = 0; i < numberArray.length; i++) {
             int n = numberArray[i];
-            if (n == max) result.add(i);
-            else if (n < max) {
+            if (n == min) result.add(i);
+            else if (n < min) {
+                min = n;
                 result.clear();
                 result.add(i);
             }
@@ -1000,7 +1004,7 @@ public class CalcUtil {
     */
     public static double[] sum(double[] a1, double[] a2) {
         int len1 = a1.length, len2 = a2.length;
-        if (len1 < len2) return CalcUtil.sum(a2, a1);
+        if (len1 < len2) return sum(a2, a1);
         if (len2 < len1) {
             a2 = Arrays.copyOf(a2, len1);
             a2 = applyFunction(a2, (n, i) -> i < len2 ? n : 0);
@@ -1028,7 +1032,7 @@ public class CalcUtil {
     */
     public static double[] mult(double[] a1, double[] a2) {
         int len1 = a1.length, len2 = a2.length;
-        if (len1 < len2) return CalcUtil.sum(a2, a1);
+        if (len1 < len2) return mult(a2, a1);
         if (len2 < len1) {
             a2 = Arrays.copyOf(a2, len1);
             a2 = applyFunction(a2, (n, i) -> i < len2 ? n : 1);
@@ -1039,7 +1043,7 @@ public class CalcUtil {
     }
     public static int[] mult(int[] a1, int[] a2) {
         int len1 = a1.length, len2 = a2.length;
-        if (len1 < len2) return sum(a2, a1);
+        if (len1 < len2) return mult(a2, a1);
         if (len2 < len1) {
             a2 = Arrays.copyOf(a2, len1);
             a2 = applyFunction(a2, (n, i) -> i < len2 ? n : 1);
@@ -1052,12 +1056,12 @@ public class CalcUtil {
     // Calculates the scalar product of two numeric arrays, as if they were vectors of real numbers.
     public static double scalarProduct(double[] a1, double[] a2) {
         if (a1.length != a2.length) return Double.NaN;
-        return CalcUtil.sum(CalcUtil.mult(a1, a2));
+        return sum(mult(a1, a2));
     }
-    public static int scalarProduct(int[] a1, int[] a2) {return CalcUtil.sum(CalcUtil.mult(a1, a2));}
+    public static int scalarProduct(int[] a1, int[] a2) {return sum(mult(a1, a2));}
     
     // Calculates the module of a number array, as if it were a vector of real numbers.
-    public static double module(double... numberArray) {return Math.sqrt(CalcUtil.sum(applyFunction(numberArray, x -> Math.pow(x, 2))));}
+    public static double module(double... numberArray) {return Math.sqrt(sum(applyFunction(numberArray, x -> Math.pow(x, 2))));}
     
     // Creates a double[] array of the specified length whose elements are all the same double input.
     public static double[] vectorOf(double d, int length) {
@@ -1067,7 +1071,7 @@ public class CalcUtil {
     }
     
     // Multiplies all elements of a double[] array by a given double value.
-    public static double[] multByScalar(double[] numberArray, double d) {return CalcUtil.mult(numberArray, vectorOf(d, numberArray.length));}
+    public static double[] multByScalar(double[] numberArray, double d) {return mult(numberArray, vectorOf(d, numberArray.length));}
     
     // </editor-fold>
     
@@ -1531,6 +1535,7 @@ public class CalcUtil {
         System.out.println("| x \t\t| y \t\t |");
         for (int i = 0; i < x.length; i++) System.out.printf("| .%8f \t | .%8f \t|\n", x[i], y[i]);
     }
+    
     /*
     * Solves the fixed point problem of finding the value x such that f(x) = x,
     * with a precision of eps, and starting to iterate on a certain initValue.
