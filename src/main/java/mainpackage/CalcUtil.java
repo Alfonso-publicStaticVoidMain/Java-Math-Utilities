@@ -83,7 +83,7 @@ public class CalcUtil {
     */
     
     // Counts the number of appearences of a character within a String.
-    static int countChar(String str, char ch) {return str.length() - str.replace(Character.toString(ch), "").length();}
+    public static int countChar(String str, char ch) {return str.length() - str.replace(Character.toString(ch), "").length();}
     
     /*
     * Generates a password String randomly selecting from a String of avaliable 
@@ -92,7 +92,7 @@ public class CalcUtil {
     * Will throw an error if you enter a length greater than the length
     * of the avaliable chararacters String without allowing repetition
     */
-    static String generatePassword(String avaliableChars, int len, boolean allowRepetition) {
+    public static String generatePassword(String avaliableChars, int len, boolean allowRepetition) {
         StringBuilder copyAvaliableChars = new StringBuilder(avaliableChars);
         String password = "";
         Random r = new Random();
@@ -105,7 +105,7 @@ public class CalcUtil {
     }
     
     // Returns a random reordering of the given String.
-    static String shuffle(String str) {
+    public static String shuffle(String str) {
         StringBuilder strBuilder = new StringBuilder(str);
         String result = "";
         Random r = new Random();
