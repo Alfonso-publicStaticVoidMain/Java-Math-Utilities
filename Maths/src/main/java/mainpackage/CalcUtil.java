@@ -89,7 +89,7 @@ public class CalcUtil {
     * Generates a password String randomly selecting from a String of avaliable 
     * characters, with or without repetition, as desired.
     *
-    * Will throw an error if you pass a length greater than the length
+    * Will throw an error if you enter a length greater than the length
     * of the avaliable chararacters String without allowing repetition
     */
     static String generatePassword(String avaliableChars, int len, boolean allowRepetition) {
@@ -125,9 +125,7 @@ public class CalcUtil {
         try {
             Integer.parseInt(str, base);
             return true;
-        } catch (Exception e) {
-            return false;
-        }
+        } catch (Exception e) {return false;}
     }
     public static boolean isInteger(String str) {return isInteger(str, 10);}
 
@@ -144,6 +142,8 @@ public class CalcUtil {
     *   firstIndexOf: Returns the index of the first appearence of an element in an array, -1 if it doesn't appear.
     *   lastIndexOf: Returns the index of the last appearence of an element in an array, -1 if it doesn't appear.
     *   allIndexesOf: Returns an integer array with the indexes of all apearences of an element in an array.
+    *   firstIndexThatSatisfiesCondition: Returns the index of the first appearence of an element that satisfies a condition.
+    *   lastIndexThatSatisfiesCondition: Returns the index of the last appearence of an element that satisfies a condition.
     *   appearsExactlyOnce: Returns true if an element appears exactly once in an array, false otherwise.
     *   appearsMoreThanOnce: Returns true if an element appears more than once in an array, false otherwise.
     *   appearsZeroTimes: Returns true if an element appears exactly zero times in an array, false otherwise.
@@ -155,9 +155,9 @@ public class CalcUtil {
     
     /*
     * This following method will return:
-    *    -2 if no element of the array satisfies the condition.
-    *    -1 if more than one element of the array satisfy the condition.
-    *    n >= 0 if exactly one element of the array satisfies the condition, with index n.
+    *    -2 if no element satisfies the condition.
+    *    -1 if more than one element satisfies the condition.
+    *    n >= 0 if exactly one element satisfies the condition, with index n.
     */
     public static <T> int onlyIndexCondition(T[] targetArray, Function<T, Boolean> condition) {
         int index = -2;
@@ -171,14 +171,14 @@ public class CalcUtil {
         }
         return index;
     }
-    public static <T> int onlyIndexCondition(List<T> intArray, Function<T, Boolean> condition) {
+    public static <T> int onlyIndexCondition(List<T> targetArray, Function<T, Boolean> condition) {
         int index = -2;
         boolean found = false;
-        for (int i = 0; i < intArray.size(); i++) {
-            if (!found && condition.apply(intArray.get(i))) {
+        for (int i = 0; i < targetArray.size(); i++) {
+            if (!found && condition.apply(targetArray.get(i))) {
                 index = i;
                 found = true;
-            } else if (found && condition.apply(intArray.get(i))) index = -1;
+            } else if (found && condition.apply(targetArray.get(i))) index = -1;
             if (found && index == -1) break;
         }
         return index;
@@ -208,7 +208,10 @@ public class CalcUtil {
         return index;
     }
     
-    // Returns the index of the first appearence of an element in an array, or -1 if it isn't present.
+    /*
+    * Returns the index of the first appearence of an element in an array,
+    * or -1 if it isn't present.
+    */
     public static <T> int firstIndexOf(T[] targetArray, T t) {
         for (int i = 0; i < targetArray.length; i++) if (targetArray[i].equals(t)) return i;
         return -1;
@@ -236,7 +239,10 @@ public class CalcUtil {
         return -1;
     }
     
-    // Returns an int[] array of all the indexes where a possible element of an array appears, or an empty array if it isn't in the array.
+    /*
+    * Returns an int[] array of all the indexes where a possible element of an
+    * array appears, or an empty array if it isn't in the array.
+    */
     public static <T> int[] allIndexesOf(T[] targetArray, T t) {
         List<Integer> listOfIndexes = new LinkedList<>();
         for (int i = 0; i < targetArray.length; i++) if (targetArray[i].equals(t)) listOfIndexes.add(i);
@@ -251,6 +257,48 @@ public class CalcUtil {
         List<Integer> listOfIndexes = new LinkedList<>();
         for (int i = 0; i < intArray.length; i++) if (intArray[i] == n) listOfIndexes.add(i);
         return intListToIntArray(listOfIndexes);
+    }
+    
+    /*
+    * Returns the index of the first element of an array that satisfies the
+    * given condition, or -1 if no element does.
+    */
+    public static <T> int firstIndexThatSatisfiesCondition(T[] targetArray, Function<T, Boolean> condition) {
+        for (int i = 0; i < targetArray.length; i++) if (condition.apply(targetArray[i])) return i;
+        return -1;
+    }
+    public static int firstIndexThatSatisfiesCondition(List<Integer> targetArray, Function<Integer, Boolean> condition) {
+        for (int i = 0; i < targetArray.size(); i++) if (condition.apply(targetArray.get(i))) return i;
+        return -1;
+    }
+    public static int firstIndexThatSatisfiesCondition(double[] doubleArray, Function<Double, Boolean> condition) {
+        for (int i = 0; i < doubleArray.length; i++) if (condition.apply(doubleArray[i])) return i;
+        return -1;
+    }
+    public static int firstIndexThatSatisfiesCondition(int[] intArray, Function<Integer, Boolean> condition) {
+        for (int i = 0; i < intArray.length; i++) if (condition.apply(intArray[i])) return i;
+        return -1;
+    }
+    
+    /*
+    * Returns the index of the last element of an array that satisfies the
+    * given condition, or -1 if no element does.
+    */
+    public static <T> int lastIndexThatSatisfiesCondition(T[] targetArray, Function<T, Boolean> condition) {
+        for (int i = targetArray.length - 1; i >= 0; i--) if (condition.apply(targetArray[i])) return i;
+        return -1;
+    }
+    public static <T> int lastIndexThatSatisfiesCondition(List<T> targetArray, Function<T, Boolean> condition) {
+        for (int i = targetArray.size() - 1; i >= 0; i--) if (condition.apply(targetArray.get(i))) return i;
+        return -1;
+    }
+    public static int lastIndexThatSatisfiesCondition(double[] doubleArray, Function<Double, Boolean> condition) {
+        for (int i = doubleArray.length - 1; i >= 0; i--) if (condition.apply(doubleArray[i])) return i;
+        return -1;
+    }
+    public static int lastIndexThatSatisfiesCondition(int[] intArray, Function<Integer, Boolean> condition) {
+        for (int i = intArray.length - 1; i >= 0; i--) if (condition.apply(intArray[i])) return i;
+        return -1;
     }
     
     // Returns true if the element appears exactly once in the array, false otherwise.
@@ -373,26 +421,33 @@ public class CalcUtil {
     
     // <editor-fold defaultstate="collapsed" desc="Array Condition methods">
     /*
-    * Contains a number of methods that aim to describe or modify arrays based
-    * on a condition that their elements and their indexes can satisfy or not.
+    * Contains a number of methods that aim to describe or modify arrays and/or
+    * Lists based on a condition that their elements and their indexes can
+    * satisfy or not.
+    *
     * Methods about applying a given function to the elements that satisfy a
     * condition are missing, since they are included in the Array Function Methods
     * section.
     *
     * When I say "condition" I mean a function from a certain class T to the
-    * Booleans class, or from the cartesian product of T x Integer to the Booleans
-    * if it also takes into account the position of the element within the array/List.
-    * This way, an element t of class T satisfies the condition if condition.apply(t)
-    * is true, and doesn't satisfy it if it's false.
+    * Boolean class, or from the cartesian product of T x Integer to Boolean
+    * if it also takes into account the position of the element within the
+    * array/List.
+    *
+    * This way, an element t of class T satisfies the condition if
+    * condition.apply(t) is true, and doesn't satisfy it if it's false.
     *
     * Contains the following methods, implemented both for arrays/Lists of
     * generic T classes, int or double:
-    *   countCondition: Counts the number of elements of an array/List that satisfy a condition.
-    *   deleteExteriorIfCondition: Deletes elements from the beginning and/or end of an array/List, until it finds an element that doesn't satisfy a given condition.
-    *   moveElementsIfCondition: Moves all elements to the beginning or end of an array/List that satisfy a condition, preserving their order.
+    *   countCondition: Counts the number of elements that satisfy a condition.
+    *   deleteExteriorIfCondition: Deletes elements from the beginning and/or end until it finds an element that doesn't satisfy a given condition.
+    *   moveElementsIfCondition: Moves all elements that satisfy a condition to the beginning or end, preserving their order.
     */
     
-    // Counts the number of elements of an array that satisfy a given condition on their value and position.
+    /*
+    * Counts the number of elements that satisfy a given condition on their
+    * value and position.
+    */
     public static <T> int countCondition(T[] targetArray, BiFunction<T, Integer, Boolean> condition) {
         int counter = 0;
         for (int i = 0; i < targetArray.length; i++) if (condition.apply(targetArray[i], i)) counter++;
@@ -419,19 +474,22 @@ public class CalcUtil {
         return counter;
     }
     
-    // Counts the number of elements of an array that satisfy a given condition on just their value.
+    /*
+    * Counts the number of elements that satisfy a given condition on
+    * just their value.
+    */
     public static <T> int countCondition(T[] targetArray, Function<T, Boolean> condition) {return countCondition(targetArray, (n, i) -> condition.apply(n));}
     public static <T> int countCondition(List<T> targetArray, Function<T, Boolean> condition) {return countCondition(targetArray, (n, i) -> condition.apply(n));}
     public static int countCondition(double[] doubleArray, Function<Double, Boolean> condition) {return countCondition(doubleArray, (n, i) -> condition.apply(n));}
     public static int countCondition(int[] intArray, Function<Integer, Boolean> condition) {return countCondition(intArray, (n, i) -> condition.apply(n));}
     public static int countCondition(boolean[] booleanArray, Function<Boolean, Boolean> condition) {return countCondition(booleanArray, (n, i) -> condition.apply(n));}
     
-    // Deletes elements from the beginning and/or end of the array, if they satisfy the condition.
+    // Deletes elements from the beginning and/or end, if they satisfy the condition.
     public static <T> T[] deleteExteriorIfCondition(
-        T[] targetArray,
-        Function<T, Boolean> condition,
-        boolean deleteFromBeginning,
-        boolean deleteFromEnd
+        T[] targetArray,                // Array to delete elements from.
+        Function<T, Boolean> condition, // Condition that needs to be satisfied by the elements deleted.
+        boolean deleteFromBeginning,    // Set to true if you want to delete from the beginning.
+        boolean deleteFromEnd           // Set to true if you want to delete form the end.
     ) {
         int len = targetArray.length;
         int initIndex = 0, finalIndex = len;
@@ -453,10 +511,10 @@ public class CalcUtil {
         return Arrays.copyOfRange(targetArray, initIndex, finalIndex);
     }
     public static <T> List<T> deleteExteriorIfCondition(
-        List<T> targetArray,
-        Function<T, Boolean> condition,
-        boolean deleteFromBeginning,
-        boolean deleteFromEnd
+        List<T> targetArray,            // List to delete elements from.
+        Function<T, Boolean> condition, // Condition that needs to be satisfied by the elements deleted.
+        boolean deleteFromBeginning,    // Set to true if you want to delete from the beginning.
+        boolean deleteFromEnd           // Set to true if you want to delete form the end.
     ) {
         int len = targetArray.size();
         int initIndex = 0, finalIndex = len;
@@ -607,35 +665,41 @@ public class CalcUtil {
     *   applyFunctionIfCondition: Applies a function to all elements of an array/List that satisfy a condition
     *   concatenatedOperator: Applies an operator consecutively to all elements of an array/List
     */
+
     
-    // Applies a function f: T -> U to a List or array of class T, returning a List of class U.
+    /*
+    * Applies a function f: T -> U to a List or array of class T,
+    * returning a List of class U. Includes variants of both functions and
+    * bifunctions, that are meant to be applied to the pair (t, i), where
+    * i is the index of the element t.
+    */
     public static <T, U> List<U> applyFunction(
-        List<T> targetArray,
-        BiFunction<T, Integer, U> f
+        List<T> targetArray,            // List to apply the function to.
+        BiFunction<T, Integer, U> f     // BiFunction to apply to the list.
     ) {
         List<U> result = new LinkedList<>();
         for (int i = 0; i < targetArray.size(); i++) result.add(f.apply(targetArray.get(i), i));
         return result;
     }
     public static <T, U> List<U> applyFunction(
-        T[] targetArray,
-        BiFunction<T, Integer, U> f
+        T[] targetArray,                // Array to apply the function to.
+        BiFunction<T, Integer, U> f     // BiFunction to apply to the array.
     ) {
         List<U> result = new LinkedList<>();
         for (int i = 0; i < targetArray.length; i++) result.add(f.apply(targetArray[i], i));
         return result;
     }
     public static <T, U> List<U> applyFunction(
-        List<T> targetArray,
-        Function<T, U> f
+        List<T> targetArray,    // List to apply the function to.
+        Function<T, U> f        // Function to apply to the list.
     ) {
         List<U> result = new LinkedList<>();
         for (T t : targetArray) result.add(f.apply(t));
         return result;
     }
     public static <T, U> List<U> applyFunction(
-        T[] targetArray,
-        Function<T, U> f
+        T[] targetArray,    // Array to apply the function to.
+        Function<T, U> f    // Function to apply to the array.
     ) {
         List<U> result = new LinkedList<>();
         for (T t : targetArray) result.add(f.apply(t));
@@ -674,29 +738,15 @@ public class CalcUtil {
         return result;
     }
     
-    // Applies the function f: T x Integer -> T to the elements of a T[] array and their index that satisfy the condition on their value and index. Modifies the array it's applied to
-//    public static <T, U extends T> void applyFunctionIfCondition(T[] targetArray, BiFunction<T, Integer, Boolean> condition, BiFunction<T, Integer, U> f) {
-//        for (int i = 0; i < targetArray.length; i++) if (condition.apply(targetArray[i], i)) targetArray[i] = f.apply(targetArray[i], i);
-//    }
-//    public static <T, U extends T> void applyFunctionIfCondition(List<T> targetArray, BiFunction<T, Integer, Boolean> condition, BiFunction<T, Integer, U> f) {
-//        for (int i = 0; i < targetArray.size(); i++) if (condition.apply(targetArray.get(i), i)) targetArray.set(i, f.apply(targetArray.get(i), i));
-//    }
-//    public static void applyFunctionIfCondition(double[] doubleArray, BiFunction<Double, Integer, Boolean> condition, BiFunction<Double, Integer, Double> f) {
-//        for (int i = 0; i < doubleArray.length; i++) if (condition.apply(doubleArray[i], i)) doubleArray[i] = f.apply(doubleArray[i], i);
-//    }
-//    public static void applyFunctionIfCondition(int[] intArray, BiFunction<Integer, Integer, Boolean> condition, BiFunction<Integer, Integer, Integer> f) {
-//        for (int i = 0; i < intArray.length; i++) if (condition.apply(intArray[i], i)) intArray[i] = f.apply(intArray[i], i);
-//    }
-    
     /*
-    * Applies the function f: T -> U or f: T x Integer -> U to the elements of the
-    * array (and their index) that satisfy the condition on their value and index,
-    * or a condition on just their value.
+    * Applies a function f: T -> U  to the elements of the array/List that
+    * satisfy the condition on their value and index, or a condition on just
+    * their value.
     */
     public static <T, U extends T> List<T> applyFunctionIfCondition(
-        T[] targetArray,
-        BiFunction<T, Integer, Boolean> condition,
-        BiFunction<T, Integer, U> f
+        T[] targetArray,                            // Array to apply the function to.
+        BiFunction<T, Integer, Boolean> condition,  // BiFunction to apply to the array.
+        BiFunction<T, Integer, U> f                 // Condition on element and index to satisfy for the function to be applied.
     ) {
         List<T> result = new LinkedList<>();
         for (int i = 0; i < targetArray.length; i++) {
@@ -721,9 +771,9 @@ public class CalcUtil {
         Function<T, U> f
     ) {return applyFunctionIfCondition(targetArray, (x, i) -> condition.apply(x), (x, i) -> f.apply(x));}
     public static <T, U extends T> List<T> applyFunctionIfCondition(
-        List<T> targetArray,
-        BiFunction<T, Integer, Boolean> condition,
-        BiFunction<T, Integer, U> f
+        List<T> targetArray,                        // List to apply the function to.
+        BiFunction<T, Integer, Boolean> condition,  // BiFunction to apply to the List.
+        BiFunction<T, Integer, U> f                 // Condition on element and index to satisfy for the function to be applied.
     ) {
         List<T> result = new LinkedList<>();
         for (int i = 0; i < targetArray.size(); i++) if (condition.apply(targetArray.get(i), i)) result.add(f.apply(targetArray.get(i), i));
@@ -807,9 +857,9 @@ public class CalcUtil {
     * If the array has exactly one element, it will return that element.
     */
     public static <T> T concatenatedOperator(
-        T[] targetArray,
-        BiFunction<T, T, T> operator,
-        boolean startAtBeginning
+        T[] targetArray,                // Array to operate on.
+        BiFunction<T, T, T> operator,   // Operator to apply to the array.
+        boolean startAtBeginning        // State parameter. Set to true to start at the beginning of the array.
     ) {
         T t = startAtBeginning ? targetArray[0] : targetArray[targetArray.length - 1];
         if (targetArray.length > 1 && startAtBeginning) for (int i = 1; i < targetArray.length; i++) t = operator.apply(t, targetArray[i]);
@@ -817,9 +867,9 @@ public class CalcUtil {
         return t;
     }
     public static <T> T concatenatedOperator(
-        List<T> targetArray,
-        BiFunction<T, T, T> operator,
-        boolean startAtBeginning
+        List<T> targetArray,            // List to operate on.
+        BiFunction<T, T, T> operator,   // Operator to apply to the List.
+        boolean startAtBeginning        // State parameter. Set to true to start at the beginning of the List.
     ) {
         T t = startAtBeginning ? targetArray.get(0) : targetArray.get(targetArray.size() - 1);
         if (targetArray.size() > 1 && startAtBeginning) for (int i = 1; i < targetArray.size(); i++) t = operator.apply(t, targetArray.get(i));
@@ -948,6 +998,7 @@ public class CalcUtil {
             double d = numberArray[i];
             if (d == max) result.add(i);
             else if (d > max) {
+                max = d;
                 result.clear();
                 result.add(i);
             }
@@ -961,6 +1012,7 @@ public class CalcUtil {
             int n = numberArray[i];
             if (n == max) result.add(i);
             else if (n > max) {
+                max = n;
                 result.clear();
                 result.add(i);
             }
@@ -982,11 +1034,12 @@ public class CalcUtil {
     // Returns an int[] array of all indexes where the maximum value is found.
     public static int[] minIndexes(double[] numberArray) {
         List<Integer> result = new LinkedList<>();
-        double max = Double.MAX_VALUE;
+        double min = Double.MAX_VALUE;
         for (int i = 0; i < numberArray.length; i++) {
             double d = numberArray[i];
-            if (d == max) result.add(i);
-            else if (d < max) {
+            if (d == min) result.add(i);
+            else if (d < min) {
+                min = d;
                 result.clear();
                 result.add(i);
             }
@@ -995,11 +1048,12 @@ public class CalcUtil {
     }
     public static int[] minIndexes(int[] numberArray) {
         List<Integer> result = new LinkedList<>();
-        int max = Integer.MIN_VALUE;
+        int min = Integer.MIN_VALUE;
         for (int i = 0; i < numberArray.length; i++) {
             int n = numberArray[i];
-            if (n == max) result.add(i);
-            else if (n < max) {
+            if (n == min) result.add(i);
+            else if (n < min) {
+                min = n;
                 result.clear();
                 result.add(i);
             }
@@ -1014,7 +1068,7 @@ public class CalcUtil {
     */
     public static double[] sum(double[] a1, double[] a2) {
         int len1 = a1.length, len2 = a2.length;
-        if (len1 < len2) return CalcUtil.sum(a2, a1);
+        if (len1 < len2) return sum(a2, a1);
         if (len2 < len1) {
             a2 = Arrays.copyOf(a2, len1);
             a2 = applyFunction(a2, (n, i) -> i < len2 ? n : 0);
@@ -1042,7 +1096,7 @@ public class CalcUtil {
     */
     public static double[] mult(double[] a1, double[] a2) {
         int len1 = a1.length, len2 = a2.length;
-        if (len1 < len2) return CalcUtil.sum(a2, a1);
+        if (len1 < len2) return mult(a2, a1);
         if (len2 < len1) {
             a2 = Arrays.copyOf(a2, len1);
             a2 = applyFunction(a2, (n, i) -> i < len2 ? n : 1);
@@ -1053,7 +1107,7 @@ public class CalcUtil {
     }
     public static int[] mult(int[] a1, int[] a2) {
         int len1 = a1.length, len2 = a2.length;
-        if (len1 < len2) return sum(a2, a1);
+        if (len1 < len2) return mult(a2, a1);
         if (len2 < len1) {
             a2 = Arrays.copyOf(a2, len1);
             a2 = applyFunction(a2, (n, i) -> i < len2 ? n : 1);
@@ -1066,12 +1120,12 @@ public class CalcUtil {
     // Calculates the scalar product of two numeric arrays, as if they were vectors of real numbers.
     public static double scalarProduct(double[] a1, double[] a2) {
         if (a1.length != a2.length) return Double.NaN;
-        return CalcUtil.sum(CalcUtil.mult(a1, a2));
+        return sum(mult(a1, a2));
     }
-    public static int scalarProduct(int[] a1, int[] a2) {return CalcUtil.sum(CalcUtil.mult(a1, a2));}
+    public static int scalarProduct(int[] a1, int[] a2) {return sum(mult(a1, a2));}
     
     // Calculates the module of a number array, as if it were a vector of real numbers.
-    public static double module(double... numberArray) {return Math.sqrt(CalcUtil.sum(applyFunction(numberArray, x -> Math.pow(x, 2))));}
+    public static double module(double... numberArray) {return Math.sqrt(sum(applyFunction(numberArray, x -> Math.pow(x, 2))));}
     
     // Creates a double[] array of the specified length whose elements are all the same double input.
     public static double[] vectorOf(double d, int length) {
@@ -1081,7 +1135,7 @@ public class CalcUtil {
     }
     
     // Multiplies all elements of a double[] array by a given double value.
-    public static double[] multByScalar(double[] numberArray, double d) {return CalcUtil.mult(numberArray, vectorOf(d, numberArray.length));}
+    public static double[] multByScalar(double[] numberArray, double d) {return mult(numberArray, vectorOf(d, numberArray.length));}
     
     // </editor-fold>
     
@@ -1545,6 +1599,7 @@ public class CalcUtil {
         System.out.println("| x \t\t| y \t\t |");
         for (int i = 0; i < x.length; i++) System.out.printf("| .%8f \t | .%8f \t|\n", x[i], y[i]);
     }
+    
     /*
     * Solves the fixed point problem of finding the value x such that f(x) = x,
     * with a precision of eps, and starting to iterate on a certain initValue.
