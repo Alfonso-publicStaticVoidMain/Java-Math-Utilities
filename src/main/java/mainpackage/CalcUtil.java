@@ -1463,6 +1463,9 @@ public class CalcUtil {
     *   Midpoint Rule
     *   Trapezoidal Rule
     *   Simpson's Rule
+    *
+    * This section remains a WIP, the methods aren't working properly and fail
+    * to approximate even the most basic integrals.
     */
     
     public static double midpointRule(
@@ -1477,7 +1480,7 @@ public class CalcUtil {
             lowerBound += i*step;
             result += f.apply(lowerBound)*step;
         }
-        return result;
+        return step*result;
     }
     
     public static double trapezoidalRule(
@@ -1534,6 +1537,7 @@ public class CalcUtil {
     * learn how to properly implement it in the cases where it really is a valid
     * alternative to calculate the minimum of the given function.
     */
+    
     
     /*
     * Constructs a multivalued quadratic function from the given matrix A
@@ -1596,8 +1600,8 @@ public class CalcUtil {
     
     public static void printGraphData(double[] x, double[] y) {
         if (x.length != y.length) return;
-        System.out.println("| x \t\t| y \t\t |");
-        for (int i = 0; i < x.length; i++) System.out.printf("| .%8f \t | .%8f \t|\n", x[i], y[i]);
+        System.out.println("| x \t\t| y \t\t|");
+        for (int i = 0; i < x.length; i++) System.out.printf("| %8f \t| %8f \t|\n", x[i], y[i]);
     }
     
     /*
@@ -1605,15 +1609,22 @@ public class CalcUtil {
     * with a precision of eps, and starting to iterate on a certain initValue.
     * maxit is the highest number of iterations the method will perform before
     * ending.
+    *
+    * Depending on the choice of the function and initial value, convergence of
+    * this method isn't guaranteed.
     */
-    public static double fixedPoint(Function<Double, Double> f, double initValue, double eps, int maxit) {
+    public static double fixedPoint(Function<Double, Double> f, double initValue, double eps, int maxit, boolean verbose) {
+        if (verbose) System.out.println("| it\t| x\t\t| f(x)\t\t|");
         for (int i = 0; i <= maxit; i++) {
             double fx = f.apply(initValue);
+            if (verbose) System.out.printf("| %d\t| %8f\t| %8f\t|\n", i, initValue, fx);
             if (Math.abs(fx - initValue) < eps) return initValue;
+            if (Double.isNaN(fx)) return Double.NaN;
             initValue = fx;
         }
         return initValue;
     }
+    public static double fixedPoint(Function<Double, Double> f, double initValue, double eps, int maxit) {return fixedPoint(f, initValue, eps, maxit, false);}
     
     /*
     * Solves an ODE of the form y' = f(x, y) on an interval [initValue, finValue]
@@ -1640,7 +1651,7 @@ public class CalcUtil {
         return y;
     }
     
-    /*
+    /* WIP, not working properly
     * Solves an ODE of the form y' = f(x, y) on an interval [initValue, finValue]
     * with initial condition y(initValue) = initCondition. Returns an array of doubles
     * that is the approximation of the solution when evaluated on each of the
@@ -1651,7 +1662,7 @@ public class CalcUtil {
     * point problem will be solved, applied to the function:
     * z -> y[i-1] + h * f(x[i], z)
     */
-    public double[] backwardEulerMethod(
+    public static double[] backwardEulerMethod(
         BiFunction<Double, Double, Double> f,   // Function of our ODE y' = f(x, y)
         double initValue,                       // Initial value to begin approximating our solution y
         double finValue,                        // Final value to end approximating out solution y
