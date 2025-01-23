@@ -63,7 +63,7 @@ public class Complex {
     // Returns the module of this complex number.
     public RealNumber module() {return new RealNumber(Math.sqrt(Math.pow(this.real.getValue(), 2) + Math.pow(this.img.getValue(), 2)));}
     public double moduleValue() {return this.module().getValue();}
-    // Returns the inverse of this.
+    // Returns the inverse of this complex number.
     public Complex inverse() {return this.moduleValue() == 0 ? new Complex() : this.conjugate().div(this.moduleValue());}
     
     // Returns the sum of a complex, real, rational, or integer number to this.
