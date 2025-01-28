@@ -2,6 +2,7 @@ package mainpackage;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 public class CalcUtil {
     /*
@@ -668,37 +669,53 @@ public class CalcUtil {
     * bifunctions, that are meant to be applied to the pair (t, i), where
     * i is the index of the element t.
     */
+    
+    /* TO DO: Reimplement the applyFunction methods using streams. Examples:
+    
+    public static <T, U> List<U> applyFunction(List<T> t, Function<T, U> f) {
+        return t.stream()
+            .map(f)
+            .collect(Collectors.toCollection(ArrayList::new));
+    }
+    
+    public static <T, U> List<U> applyFunction(List<T> t, BiFunction<T, Integer, U> f) {
+        return IntStream.range(0, t.size())
+           .mapToObj(i -> f.apply(t.get(i), i))
+           .collect(Collectors.toCollection(ArrayList::new));
+    }
+    
+    */
     public static <T, U> List<U> applyFunction(
         List<T> targetArray,            // List to apply the function to.
         BiFunction<T, Integer, U> f     // BiFunction to apply to the list.
     ) {
-        List<U> result = new LinkedList<>();
-        for (int i = 0; i < targetArray.size(); i++) result.add(f.apply(targetArray.get(i), i));
-        return result;
+        return IntStream.range(0, targetArray.size())
+           .mapToObj(i -> f.apply(targetArray.get(i), i))
+           .collect(Collectors.toCollection(ArrayList::new));
     }
     public static <T, U> List<U> applyFunction(
         T[] targetArray,                // Array to apply the function to.
         BiFunction<T, Integer, U> f     // BiFunction to apply to the array.
     ) {
-        List<U> result = new LinkedList<>();
-        for (int i = 0; i < targetArray.length; i++) result.add(f.apply(targetArray[i], i));
-        return result;
+        return IntStream.range(0, targetArray.length)
+           .mapToObj(i -> f.apply(targetArray[i], i))
+           .collect(Collectors.toCollection(ArrayList::new));
     }
     public static <T, U> List<U> applyFunction(
         List<T> targetArray,    // List to apply the function to.
         Function<T, U> f        // Function to apply to the list.
     ) {
-        List<U> result = new LinkedList<>();
-        for (T t : targetArray) result.add(f.apply(t));
-        return result;
+        return targetArray.stream()
+            .map(f)
+            .collect(Collectors.toCollection(ArrayList::new));
     }
     public static <T, U> List<U> applyFunction(
         T[] targetArray,    // Array to apply the function to.
         Function<T, U> f    // Function to apply to the array.
     ) {
-        List<U> result = new LinkedList<>();
-        for (T t : targetArray) result.add(f.apply(t));
-        return result;
+        return Stream.of(targetArray)
+            .map(f)
+            .collect(Collectors.toCollection(ArrayList::new));
     }
     public static double[] applyFunction(
         double[] doubleArray,
