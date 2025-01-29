@@ -444,22 +444,34 @@ public class CalcUtil {
     * Counts the number of elements that satisfy a given condition on their
     * value and position.
     */
-    public static <T> int countCondition(T[] targetArray, BiFunction<T, Integer, Boolean> condition) {
+    public static <T> int countCondition(
+        T[] targetArray,
+        BiFunction<T, Integer, Boolean> condition
+    ) {
         int counter = 0;
         for (int i = 0; i < targetArray.length; i++) if (condition.apply(targetArray[i], i)) counter++;
         return counter;
     }
-    public static <T> int countCondition(List<T> targetArray, BiFunction<T, Integer, Boolean> condition) {
+    public static <T> int countCondition(
+        List<T> targetArray,
+        BiFunction<T, Integer, Boolean> condition
+    ) {
         int counter = 0;
         for (int i = 0; i < targetArray.size(); i++) if (condition.apply(targetArray.get(i), i)) counter++;
         return counter;
     }
-    public static int countCondition(double[] doubleArray, BiFunction<Double, Integer, Boolean> condition) {
+    public static int countCondition(
+        double[] doubleArray,
+        BiFunction<Double, Integer, Boolean> condition
+    ) {
         int counter = 0;
         for (int i = 0; i < doubleArray.length; i++) if (condition.apply(doubleArray[i], i)) counter++;
         return counter;
     }
-    public static int countCondition(int[] intArray, BiFunction<Integer, Integer, Boolean> condition) {
+    public static int countCondition(
+        int[] intArray,
+        BiFunction<Integer, Integer, Boolean> condition
+    ) {
         int counter = 0;
         for (int i = 0; i < intArray.length; i++) if (condition.apply(intArray[i], i)) counter++;
         return counter;
@@ -474,16 +486,16 @@ public class CalcUtil {
     * Counts the number of elements that satisfy a given condition on
     * just their value.
     */
-    public static <T> int countCondition(T[] targetArray, Function<T, Boolean> condition) {return countCondition(targetArray, (n, i) -> condition.apply(n));}
-    public static <T> int countCondition(List<T> targetArray, Function<T, Boolean> condition) {return countCondition(targetArray, (n, i) -> condition.apply(n));}
-    public static int countCondition(double[] doubleArray, Function<Double, Boolean> condition) {return countCondition(doubleArray, (n, i) -> condition.apply(n));}
-    public static int countCondition(int[] intArray, Function<Integer, Boolean> condition) {return countCondition(intArray, (n, i) -> condition.apply(n));}
-    public static int countCondition(boolean[] booleanArray, Function<Boolean, Boolean> condition) {return countCondition(booleanArray, (n, i) -> condition.apply(n));}
+    public static <T> int countCondition(T[] targetArray, Predicate<T> condition) {return countCondition(targetArray, (n, i) -> condition.test(n));}
+    public static <T> int countCondition(List<T> targetArray, Predicate<T> condition) {return countCondition(targetArray, (n, i) -> condition.test(n));}
+    public static int countCondition(double[] doubleArray, Predicate<Double> condition) {return countCondition(doubleArray, (n, i) -> condition.test(n));}
+    public static int countCondition(int[] intArray, Predicate<Integer> condition) {return countCondition(intArray, (n, i) -> condition.test(n));}
+    public static int countCondition(boolean[] booleanArray, Predicate<Boolean> condition) {return countCondition(booleanArray, (n, i) -> condition.test(n));}
     
     // Deletes elements from the beginning and/or end, if they satisfy the condition.
     public static <T> T[] deleteExteriorIfCondition(
         T[] targetArray,                // Array to delete elements from.
-        Function<T, Boolean> condition, // Condition that needs to be satisfied by the elements deleted.
+        Predicate<T> condition,         // Condition that needs to be satisfied by the elements deleted.
         boolean deleteFromBeginning,    // Set to true if you want to delete from the beginning.
         boolean deleteFromEnd           // Set to true if you want to delete form the end.
     ) {
@@ -491,11 +503,11 @@ public class CalcUtil {
         int initIndex = 0, finalIndex = len;
         boolean initFound = false, finalFound = false;
         for (int i = 0; i < len; i++) {
-            if (!initFound && deleteFromBeginning && !condition.apply(targetArray[i])) {
+            if (!initFound && deleteFromBeginning && !condition.test(targetArray[i])) {
                 initIndex = i;
                 initFound = true;
             }
-            if (!finalFound && deleteFromEnd && !condition.apply(targetArray[len - 1 - i])) {
+            if (!finalFound && deleteFromEnd && !condition.test(targetArray[len - 1 - i])) {
                 finalIndex = len - i;
                 finalFound = true;
             }
@@ -508,7 +520,7 @@ public class CalcUtil {
     }
     public static <T> List<T> deleteExteriorIfCondition(
         List<T> targetArray,            // List to delete elements from.
-        Function<T, Boolean> condition, // Condition that needs to be satisfied by the elements deleted.
+        Predicate<T> condition,         // Condition that needs to be satisfied by the elements deleted.
         boolean deleteFromBeginning,    // Set to true if you want to delete from the beginning.
         boolean deleteFromEnd           // Set to true if you want to delete form the end.
     ) {
@@ -516,11 +528,11 @@ public class CalcUtil {
         int initIndex = 0, finalIndex = len;
         boolean initFound = false, finalFound = false;
         for (int i = 0; i < len; i++) {
-            if (!initFound && deleteFromBeginning && !condition.apply(targetArray.get(i))) {
+            if (!initFound && deleteFromBeginning && !condition.test(targetArray.get(i))) {
                 initIndex = i;
                 initFound = true;
             }
-            if (!finalFound && deleteFromEnd && !condition.apply(targetArray.get(len - 1 - i))) {
+            if (!finalFound && deleteFromEnd && !condition.test(targetArray.get(len - 1 - i))) {
                 finalIndex = len - i;
                 finalFound = true;
             }
@@ -531,16 +543,21 @@ public class CalcUtil {
         if (initIndex == 0 && finalIndex == len) return Arrays.asList();
         return targetArray.subList(initIndex, finalIndex);
     }
-    public static double[] deleteExteriorIfCondition(double[] doubleArray, Function<Double, Boolean> condition, boolean deleteFromBeginning, boolean deleteFromEnd) {
+    public static double[] deleteExteriorIfCondition(
+        double[] doubleArray,
+        Predicate<Double> condition,         
+        boolean deleteFromBeginning,
+        boolean deleteFromEnd
+    ) {
         int len = doubleArray.length;
         int initIndex = 0, finalIndex = len;
         boolean initFound = false, finalFound = false;
         for (int i = 0; i < len; i++) {
-            if (!initFound && deleteFromBeginning && !condition.apply(doubleArray[i])) {
+            if (!initFound && deleteFromBeginning && !condition.test(doubleArray[i])) {
                 initIndex = i;
                 initFound = true;
             }
-            if (!finalFound && deleteFromEnd && !condition.apply(doubleArray[len - 1 - i])) {
+            if (!finalFound && deleteFromEnd && !condition.test(doubleArray[len - 1 - i])) {
                 finalIndex = len - i;
                 finalFound = true;
             }
@@ -549,16 +566,21 @@ public class CalcUtil {
         if (initIndex == 0 && finalIndex == len) return new double[0];
         return Arrays.copyOfRange(doubleArray, initIndex, finalIndex);
     }
-    public static int[] deleteExteriorIfCondition(int[] intArray, Function<Integer, Boolean> condition, boolean deleteFromBeginning, boolean deleteFromEnd) {
+    public static int[] deleteExteriorIfCondition(
+        int[] intArray,
+        Predicate<Integer> condition,         
+        boolean deleteFromBeginning,
+        boolean deleteFromEnd
+    ) {
         int len = intArray.length;
         int initIndex = 0, finalIndex = len;
         boolean initFound = false, finalFound = false;
         for (int i = 0; i < len; i++) {
-            if (!initFound && deleteFromBeginning && !condition.apply(intArray[i])) {
+            if (!initFound && deleteFromBeginning && !condition.test(intArray[i])) {
                 initIndex = i;
                 initFound = true;
             }
-            if (!finalFound && deleteFromEnd && !condition.apply(intArray[len - 1 - i])) {
+            if (!finalFound && deleteFromEnd && !condition.test(intArray[len - 1 - i])) {
                 finalIndex = len - i;
                 finalFound = true;
             }
@@ -569,17 +591,21 @@ public class CalcUtil {
     }
     
     // Moves all elements of the array that satisfy the condition to the beginning or to the end of it.
-    public static <T> List<T> moveElementsIfCondition(T[] targetArray, Function<T, Boolean> condition, boolean moveToBeginning) {
+    public static <T> List<T> moveElementsIfCondition(
+        T[] targetArray,
+        Predicate<T> condition,         
+        boolean moveToBeginning
+    ) {
         List<T> result = new LinkedList<>();
         int index = 0;
         for (T t : targetArray) {
             if (moveToBeginning) {
-                if (condition.apply(t)) {
+                if (condition.test(t)) {
                     result.add(index, t);
                     index++;
                 } else result.add(t);
             } else {
-                if (condition.apply(t)) result.add(t);
+                if (condition.test(t)) result.add(t);
                 else {
                     result.add(index, t);
                     index++;
@@ -588,17 +614,21 @@ public class CalcUtil {
         }
         return result;
     }
-    public static <T> List<T> moveElementsIfCondition(List<T> targetArray, Function<T, Boolean> condition, boolean moveToBeginning) {
+    public static <T> List<T> moveElementsIfCondition(
+        List<T> targetArray,
+        Predicate<T> condition,         
+        boolean moveToBeginning
+    ) {
         List<T> result = new LinkedList<>();
         int index = 0;
         for (T t : targetArray) {
             if (moveToBeginning) {
-                if (condition.apply(t)) {
+                if (condition.test(t)) {
                     result.add(index, t);
                     index++;
                 } else result.add(t);
             } else {
-                if (condition.apply(t)) result.add(t);
+                if (condition.test(t)) result.add(t);
                 else {
                     result.add(index, t);
                     index++;
@@ -607,17 +637,21 @@ public class CalcUtil {
         }
         return result;
     }
-    public static List<Double> moveElementsIfCondition(double[] targetArray, Function<Double, Boolean> condition, boolean moveToBeginning) {
+    public static List<Double> moveElementsIfCondition(
+        double[] targetArray,
+        Predicate<Double> condition,         
+        boolean moveToBeginning
+    ) {
         List<Double> result = new LinkedList<>();
         int index = 0;
         for (double t : targetArray) {
             if (moveToBeginning) {
-                if (condition.apply(t)) {
+                if (condition.test(t)) {
                     result.add(index, t);
                     index++;
                 } else result.add(t);
             } else {
-                if (condition.apply(t)) result.add(t);
+                if (condition.test(t)) result.add(t);
                 else {
                     result.add(index, t);
                     index++;
@@ -626,17 +660,21 @@ public class CalcUtil {
         }
         return result;
     }
-    public static List<Integer> moveElementsIfCondition(int[] targetArray, Function<Integer, Boolean> condition, boolean moveToBeginning) {
+    public static List<Integer> moveElementsIfCondition(
+        int[] targetArray,
+        Predicate<Integer> condition,         
+        boolean moveToBeginning
+    ) {
         List<Integer> result = new LinkedList<>();
         int index = 0;
         for (int t : targetArray) {
             if (moveToBeginning) {
-                if (condition.apply(t)) {
+                if (condition.test(t)) {
                     result.add(index, t);
                     index++;
                 } else result.add(t);
             } else {
-                if (condition.apply(t)) result.add(t);
+                if (condition.test(t)) result.add(t);
                 else {
                     result.add(index, t);
                     index++;
@@ -1212,18 +1250,11 @@ public class CalcUtil {
     /*
     * Contains a small number of methods dealing with functions and operations
     * with them. Contains the followind methods:
-    *   not: Returns the negation of a condition.
-    *   or: Returns the function of the disjunction of two conditions.
-    *   and: Returnt the function of the adjunction of two conditions.
     *   functionSum: Returns the function sum of two number functions.
     *   functionInvertSign: Returns the function with inverted sign of a number function.
     *   functionSubstr: Returns the function substraction of two number functions.
     *   functionMult: Returns the function multiplication of two number functions.
     */
-    
-    public static <T> Function<T, Boolean> not(Function<T, Boolean> f) {return t -> !f.apply(t);}
-    public static <T> Function<T, Boolean> or(Function<T, Boolean> f1, Function<T, Boolean> f2) {return t -> f1.apply(t) || f2.apply(t);}
-    public static <T> Function<T, Boolean> and(Function<T, Boolean> f1, Function<T, Boolean> f2) {return t -> f1.apply(t) && f2.apply(t);}
     
     public static Function<Double, Double> functionSum(Function<Double, Double> f, Function<Double, Double> g) {return x -> f.apply(x) + g.apply(x);}
     public static Function<Double, Double> functionInvertSign(Function<Double, Double> f) {return x -> -f.apply(x);}
@@ -1322,6 +1353,7 @@ public class CalcUtil {
             }
             if (printIterations) System.out.printf("| %d\t| %.8f\t| %.8f\t|\n", counter, x, f.apply(x));
             counter++;
+            if (Double.isNaN(x)) return Double.NaN;
         }
         if (printIterations && counter >= maxit) System.out.println("Maximum number of iterations reached.");
         return x;
@@ -1429,8 +1461,9 @@ public class CalcUtil {
         int order                   // Order of the derivative. A value of 0 would simply evaluate the function at x.
     ) {
         if (h == 0 && order != 0) return Double.NaN;
-        if (order > 6 || (accuracy != 2 && accuracy != 4 && accuracy != 6 && accuracy != 8)
-        || (order >= 3 && order <= 6 && accuracy == 8)) return Double.NaN;
+        if (order > 6
+            || (accuracy != 2 && accuracy != 4 && accuracy != 6 && accuracy != 8)
+            || (order >= 3 && order <= 6 && accuracy == 8)) return Double.NaN;
         if (order == 0) return f.apply(x);
         accuracy = accuracy/2 - 1;
         double result = 0;
@@ -1533,8 +1566,7 @@ public class CalcUtil {
     *   Trapezoidal Rule
     *   Simpson's Rule
     *
-    * This section remains a WIP, the methods aren't working properly and fail
-    * to approximate even the most basic integrals.
+    * TO DO: testing
     */
     
     public static double midpointRule(
@@ -1543,13 +1575,11 @@ public class CalcUtil {
         double upperBound,          // Upper bound of the integration interval.
         int n                       // Number of subintervals to divide the interval into.
     ) {
-        double result = 0;
+        double[] interval = partitionInterval(lowerBound, upperBound, n);
+        double[] coefficients = new double[interval.length];
+        for (int i = 0; i < coefficients.length; i++) coefficients[i] = 1;
         double step = (upperBound - lowerBound)/n;
-        for (int i = 0; i <= n; i++) {
-            lowerBound += i*step;
-            result += f.apply(lowerBound)*step;
-        }
-        return step*result;
+        return step * scalarProduct(applyFunction(interval, x -> f.apply(x)), coefficients);
     }
     
     public static double trapezoidalRule(
@@ -1558,14 +1588,14 @@ public class CalcUtil {
         double upperBound,          // Upper bound of the integration interval.
         int n                       // Number of subintervals to divide the interval into.
     ) {
-        double result = 0;
-        double step = (upperBound - lowerBound)/n;
-        for (int i = 0; i <= n; i++) {
-            lowerBound += i*step;
-            if (i == 0 || i == n) result += f.apply(lowerBound);
-            else result += 2 * f.apply(lowerBound);
+        double[] interval = partitionInterval(lowerBound, upperBound, n);
+        double[] coefficients = new double[interval.length];
+        for (int i = 0; i < coefficients.length; i++) {
+            if (i == 0 || i == coefficients.length - 1) coefficients[i] = 1;
+            else coefficients[i] = 2;
         }
-        return result*step/2;
+        double step = (upperBound - lowerBound)/n;
+        return step/2 * scalarProduct(applyFunction(interval, x -> f.apply(x)), coefficients);
     }
     
     public static double SimpsonRule(
@@ -1574,15 +1604,15 @@ public class CalcUtil {
         double upperBound,          // Upper bound of the integration interval.
         int n                       // Number of subintervals to divide the interval into.
     ) {
-        double result = 0;
-        double step = (upperBound - lowerBound)/n;
-        for (int i = 0; i <= n; i++) {
-            lowerBound += i*step;
-            if (i == 0 || i == n) result += f.apply(lowerBound);
-            else if (i % 2 == 1) result += 4 * f.apply(lowerBound);
-            else if (i % 2 == 0) result += 2 * f.apply(lowerBound);
+        double[] interval = partitionInterval(lowerBound, upperBound, n);
+        double[] coefficients = new double[interval.length];
+        for (int i = 0; i < coefficients.length; i++) {
+            if (i == 0 || i == coefficients.length - 1) coefficients[i] = 1;
+            else if (i % 2 == 1) coefficients[i] = 4;
+            else coefficients[i] = 2;
         }
-        return result*step/3;
+        double step = (upperBound - lowerBound)/n;
+        return step/3 * scalarProduct(applyFunction(interval, x -> f.apply(x)), coefficients);
     }
     // </editor-fold>
     
@@ -1745,9 +1775,21 @@ public class CalcUtil {
         for (int i = 1; i <= n; i++) {
             int j = i;
             Function<Double, Double> fixedPointFunction = z -> y[j-1] + step * f.apply(x[j], z);
-            y[i] = fixedPoint(fixedPointFunction, x[i], 1e-6, 10000);
+            y[i] = rootFinderMethod(fixedPointFunction, Newton(fixedPointFunction), 1, 1e-6, 100, false);
         }
         return y;
+        
+        /* Testing block for thebackward Euler method:
+        BiFunction<Double, Double, Double> f = (x, t) -> x;
+        double initValue = 0;
+        double finValue = 1;
+        double initCondition = 0;
+        int n = 100;
+        double[] x = CalcUtil.partitionInterval(initValue, finValue, n);
+        double[] y = CalcUtil.backwardEulerMethod(f, initValue, finValue, initCondition, n);
+        CalcUtil.printGraphData(x, y);
+        */
+        
     }
     // </editor-fold>
     
