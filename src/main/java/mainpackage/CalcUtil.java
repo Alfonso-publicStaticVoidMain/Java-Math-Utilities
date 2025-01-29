@@ -721,33 +721,45 @@ public class CalcUtil {
         double[] doubleArray,
         BiFunction<Double, Integer, Double> f
     ) {
-        double[] result = new double[doubleArray.length];
-        for (int i = 0; i < doubleArray.length; i++) result[i] = f.apply(doubleArray[i], i);
-        return result;
+        return IntStream.range(0, doubleArray.length)
+           .mapToDouble(i -> f.apply(doubleArray[i], i))
+           .toArray();
+//        double[] result = new double[doubleArray.length];
+//        for (int i = 0; i < doubleArray.length; i++) result[i] = f.apply(doubleArray[i], i);
+//        return result;
     }
     public static double[] applyFunction(
         double[] doubleArray,
-        Function<Double, Double> f
+        DoubleUnaryOperator f
     ) {
-        double[] result = new double[doubleArray.length];
-        for (int i = 0; i < doubleArray.length; i++) result[i] = f.apply(doubleArray[i]);
-        return result;
+        return DoubleStream.of(doubleArray)
+           .map(f)
+           .toArray();      
+//        double[] result = new double[doubleArray.length];
+//        for (int i = 0; i < doubleArray.length; i++) result[i] = f.apply(doubleArray[i]);
+//        return result;
     }
     public static int[] applyFunction(
         int[] intArray,
         BiFunction<Integer, Integer, Integer> f
     ) {
-        int[] result = new int[intArray.length];
-        for (int i = 0; i < intArray.length; i++) result[i] = f.apply(intArray[i], i);
-        return result;
+        return IntStream.range(0, intArray.length)
+           .map(i -> f.apply(intArray[i], i))
+           .toArray();
+//        int[] result = new int[intArray.length];
+//        for (int i = 0; i < intArray.length; i++) result[i] = f.apply(intArray[i], i);
+//        return result;
     }
     public static int[] applyFunction(
         int[] intArray,
-        Function<Integer, Integer> f
+        IntUnaryOperator f
     ) {
-        int[] result = new int[intArray.length];
-        for (int i = 0; i < intArray.length; i++) result[i] = f.apply(intArray[i]);
-        return result;
+        return IntStream.of(intArray)
+           .map(f)
+           .toArray();
+//        int[] result = new int[intArray.length];
+//        for (int i = 0; i < intArray.length; i++) result[i] = f.apply(intArray[i]);
+//        return result;
     }
     
     /*
@@ -760,106 +772,122 @@ public class CalcUtil {
         BiFunction<T, Integer, Boolean> condition,  // BiFunction to apply to the array.
         BiFunction<T, Integer, U> f                 // Condition on element and index to satisfy for the function to be applied.
     ) {
-        List<T> result = new LinkedList<>();
-        for (int i = 0; i < targetArray.length; i++) {
-            if (condition.apply(targetArray[i], i)) result.add(f.apply(targetArray[i], i));
-            else result.add(targetArray[i]);
-        }
-        return result;
+        return applyFunction(targetArray, (x, i) -> condition.apply(x, i) ? f.apply(x, i) : x);
+//        List<T> result = new LinkedList<>();
+//        for (int i = 0; i < targetArray.length; i++) {
+//            if (condition.apply(targetArray[i], i)) result.add(f.apply(targetArray[i], i));
+//            else result.add(targetArray[i]);
+//        }
+//        return result;
     }
     public static <T, U extends T> List<T> applyFunctionIfCondition(
         T[] targetArray,
-        Function<T, Boolean> condition,
+        Predicate<T> condition,
         BiFunction<T, Integer, U> f
-    ) {return applyFunctionIfCondition(targetArray, (x, i) -> condition.apply(x), f);}
+    ) {return applyFunction(targetArray, (x, i) -> condition.test(x) ? f.apply(x, i) : x);}
+        //{return applyFunctionIfCondition(targetArray, (x, i) -> condition.apply(x), f);}
     public static <T, U extends T> List<T> applyFunctionIfCondition(
         T[] targetArray,
         BiFunction<T, Integer, Boolean> condition,
         Function<T, U> f
-    ) {return applyFunctionIfCondition(targetArray, condition, (x, i) -> f.apply(x));}
+    ) {return applyFunction(targetArray, (x, i) -> condition.apply(x, i) ? f.apply(x) : x);}
+        //{return applyFunctionIfCondition(targetArray, condition, (x, i) -> f.apply(x));}
     public static <T, U extends T> List<T> applyFunctionIfCondition(
         T[] targetArray,
-        Function<T, Boolean> condition,
+        Predicate<T> condition,
         Function<T, U> f
-    ) {return applyFunctionIfCondition(targetArray, (x, i) -> condition.apply(x), (x, i) -> f.apply(x));}
+    ) {return applyFunction(targetArray, (x, i) -> condition.test(x) ? f.apply(x) : x);}
+    //{return applyFunctionIfCondition(targetArray, (x, i) -> condition.apply(x), (x, i) -> f.apply(x));}
     public static <T, U extends T> List<T> applyFunctionIfCondition(
         List<T> targetArray,                        // List to apply the function to.
         BiFunction<T, Integer, Boolean> condition,  // BiFunction to apply to the List.
         BiFunction<T, Integer, U> f                 // Condition on element and index to satisfy for the function to be applied.
     ) {
-        List<T> result = new LinkedList<>();
-        for (int i = 0; i < targetArray.size(); i++) if (condition.apply(targetArray.get(i), i)) result.add(f.apply(targetArray.get(i), i));
-        return result;
+        return applyFunction(targetArray, (x, i) -> condition.apply(x, i) ? f.apply(x, i) : x);
+//        List<T> result = new LinkedList<>();
+//        for (int i = 0; i < targetArray.size(); i++) if (condition.apply(targetArray.get(i), i)) result.add(f.apply(targetArray.get(i), i));
+//        return result;
     }
     public static <T, U extends T> List<T> applyFunctionIfCondition(
         List<T> targetArray,
-        Function<T, Boolean> condition,
+        Predicate<T> condition,
         BiFunction<T, Integer, U> f
-    ) {return applyFunctionIfCondition(targetArray, (x, i) -> condition.apply(x), f);}
+    ) {return applyFunction(targetArray, (x, i) -> condition.test(x) ? f.apply(x, i) : x);}
+    //{return applyFunctionIfCondition(targetArray, (x, i) -> condition.apply(x), f);}
     public static <T, U extends T> List<T> applyFunctionIfCondition(
         List<T> targetArray,
         BiFunction<T, Integer, Boolean> condition,
         Function<T, U> f
-    ) {return applyFunctionIfCondition(targetArray, condition, (x, i) -> f.apply(x));}
+    ) {return applyFunction(targetArray, (x, i) -> condition.apply(x, i) ? f.apply(x) : x);}
+    //{return applyFunctionIfCondition(targetArray, condition, (x, i) -> f.apply(x));}
     public static <T, U extends T> List<T> applyFunctionIfCondition(
         List<T> targetArray,
-        Function<T, Boolean> condition,
+        Predicate<T> condition,
         Function<T, U> f
-    ) {return applyFunctionIfCondition(targetArray, (x, i) -> condition.apply(x), (x, i) -> f.apply(x));}
-    public static <U extends Double> List<Double> applyFunctionIfCondition(
+    ) {return applyFunction(targetArray, (x, i) -> condition.test(x) ? f.apply(x) : x);}
+    //{return applyFunctionIfCondition(targetArray, (x, i) -> condition.apply(x), (x, i) -> f.apply(x));}
+    public static <U extends Double> double[] applyFunctionIfCondition(
         double[] doubleArray,
         BiFunction<Double, Integer, Boolean> condition,
         BiFunction<Double, Integer, U> f
     ) {
-        List<Double> result = new LinkedList<>();
-        for (int i = 0; i < doubleArray.length; i++) {
-            if (condition.apply(doubleArray[i], i)) result.add(f.apply(doubleArray[i], i));
-            else result.add(doubleArray[i]);
-        }
-        return result;
+        return applyFunction(doubleArray, (x, i) -> condition.apply(x, i) ? f.apply(x, i) : x);
+//        List<Double> result = new LinkedList<>();
+//        for (int i = 0; i < doubleArray.length; i++) {
+//            if (condition.apply(doubleArray[i], i)) result.add(f.apply(doubleArray[i], i));
+//            else result.add(doubleArray[i]);
+//        }
+//        return result;
     }
-    public static <U extends Double> List<Double> applyFunctionIfCondition(
+    public static <U extends Double> double[] applyFunctionIfCondition(
         double[] doubleArray,
-        Function<Double, Boolean> condition,
+        Predicate<Double> condition,
         BiFunction<Double, Integer, U> f
-    ) {return applyFunctionIfCondition(doubleArray, (x, i) -> condition.apply(x), f);}
-    public static <U extends Double> List<Double> applyFunctionIfCondition(
+    ) {return applyFunction(doubleArray, (x, i) -> condition.test(x) ? f.apply(x, i) : x);}
+    //{return applyFunctionIfCondition(doubleArray, (x, i) -> condition.apply(x), f);}
+    public static <U extends Double> double[] applyFunctionIfCondition(
         double[] doubleArray,
         BiFunction<Double, Integer, Boolean> condition,
         Function<Double, U> f
-    ) {return applyFunctionIfCondition(doubleArray, condition, (x, i) -> f.apply(x));}
-    public static <U extends Double> List<Double> applyFunctionIfCondition(
+    ) {return applyFunction(doubleArray, (x, i) -> condition.apply(x, i) ? f.apply(x) : x);}
+    //{return applyFunctionIfCondition(doubleArray, condition, (x, i) -> f.apply(x));}
+    public static <U extends Double> double[] applyFunctionIfCondition(
         double[] doubleArray,
-        Function<Double, Boolean> condition,
+        Predicate<Double> condition,
         Function<Double, U> f
-    ) {return applyFunctionIfCondition(doubleArray, (x, i) -> condition.apply(x), (x, i) -> f.apply(x));}
-    public static <U extends Integer> List<Integer> applyFunctionIfCondition(
+    ) {return applyFunction(doubleArray, (x, i) -> condition.test(x) ? f.apply(x) : x);}
+    //{return applyFunctionIfCondition(doubleArray, (x, i) -> condition.apply(x), (x, i) -> f.apply(x));}
+    public static <U extends Integer> int[] applyFunctionIfCondition(
         int[] intArray,
         BiFunction<Integer, Integer, Boolean> condition,
         BiFunction<Integer, Integer, U> f
     ) {
-        List<Integer> result = new LinkedList<>();
-        for (int i = 0; i < intArray.length; i++) {
-            if (condition.apply(intArray[i], i)) result.add(f.apply(intArray[i], i));
-            else result.add(intArray[i]);
-        }
-        return result;
+        return applyFunction(intArray, (x, i) -> condition.apply(x, i) ? f.apply(x, i) : x);
+//        List<Integer> result = new LinkedList<>();
+//        for (int i = 0; i < intArray.length; i++) {
+//            if (condition.apply(intArray[i], i)) result.add(f.apply(intArray[i], i));
+//            else result.add(intArray[i]);
+//        }
+//        return result;
     }
-    public static <U extends Integer> List<Integer> applyFunctionIfCondition(
+    public static <U extends Integer> int[] applyFunctionIfCondition(
         int[] intArray,
-        Function<Integer, Boolean> condition,
+        Predicate<Integer> condition,
         BiFunction<Integer, Integer, U> f
-    ) {return applyFunctionIfCondition(intArray, (x, i) -> condition.apply(x), f);}
-    public static <U extends Integer> List<Integer> applyFunctionIfCondition(
+    ) {return applyFunction(intArray, (x, i) -> condition.test(x) ? f.apply(x, i) : x);}
+    //{return applyFunctionIfCondition(intArray, (x, i) -> condition.apply(x), f);}
+    public static <U extends Integer> int[] applyFunctionIfCondition(
         int[] intArray,
         BiFunction<Integer, Integer, Boolean> condition,
         Function<Integer, U> f
-    ) {return applyFunctionIfCondition(intArray, condition, (x, i) -> f.apply(x));}
-    public static <U extends Integer> List<Integer> applyFunctionIfCondition(
+    ) {return applyFunction(intArray, (x, i) -> condition.apply(x, i) ? f.apply(x) : x);}
+    //{return applyFunctionIfCondition(intArray, condition, (x, i) -> f.apply(x));}
+    public static <U extends Integer> int[] applyFunctionIfCondition(
         int[] intArray,
-        Function<Integer, Boolean> condition,
+        Predicate<Integer> condition,
         Function<Integer, U> f
-    ) {return applyFunctionIfCondition(intArray, (x, i) -> condition.apply(x), (x, i) -> f.apply(x));}
+    ) {return applyFunction(intArray, (x, i) -> condition.test(x) ? f.apply(x) : x);}
+    //{return applyFunctionIfCondition(intArray, (x, i) -> condition.apply(x), (x, i) -> f.apply(x));}
     
     /*
     * Operates the first two elements of an array/List, then operates the result
@@ -867,6 +895,13 @@ public class CalcUtil {
     * If startAtBeginning is false, it starts operating the last two elements.
     * Will throw an error if the array is empty.
     * If the array has exactly one element, it will return that element.
+    */
+    
+    /*
+    * TO DO: Find how to implement the concatenatedOperator method with streams.
+    * Current problems:
+    *   .reduce(BinaryOperator) returns an Optional, which can't be cast.
+    *   Need to find how to implement the startAtBeginning state
     */
     public static <T> T concatenatedOperator(
         T[] targetArray,                // Array to operate on.
@@ -945,25 +980,35 @@ public class CalcUtil {
     
     // Copies a List<Double> to a double[] array.
     public static double[] doubleListToDoubleArray(List<Double> doubleList) {
-        double[] result = new double[doubleList.size()];
-        for (int i = 0; i < result.length; i++) result[i] = doubleList.get(i);
-        return result;
+        return doubleList.stream()
+            .mapToDouble(Double::doubleValue)
+            .toArray();      
+//        double[] result = new double[doubleList.size()];
+//        for (int i = 0; i < result.length; i++) result[i] = doubleList.get(i);
+//        return result;
     }
     // Copies a List<Integer> to an int[] array.
     public static int[] intListToIntArray(List<Integer> intList) {
-        int[] result = new int[intList.size()];
-        for (int i = 0; i < result.length; i++) result[i] = intList.get(i);
-        return result;
+        return intList.stream()
+            .mapToInt(Integer::intValue)
+            .toArray();
+//        int[] result = new int[intList.size()];
+//        for (int i = 0; i < result.length; i++) result[i] = intList.get(i);
+//        return result;
     }
     
     // Converts a boolean[] array to an int[] array, where true -> 1 and false -> 0.
+    // TO DO implement this method with streams.
     public static int[] booleanToIntArray(boolean[] boolArray) {
         int[] result = new int[boolArray.length];
         for (int i = 0; i < result.length; i++) result[i] = boolArray[i] ? 1 : 0;
         return result;
     }
     
+    // TO DO implement this method with streams.
     public static String vectorToString(double[] x) {
+//        return DoubleStream.of(x)
+//            .collect(Collectors.joining(",", "(", ")"));
         StringBuilder result = new StringBuilder("(");
         for (int i = 0; i < x.length; i++) {
             result.append(x[i]);
@@ -974,16 +1019,28 @@ public class CalcUtil {
     }
     
     // Sums all elements of a numeric array.
-    public static double sum(double... numberArray) {return concatenatedOperator(numberArray, (x, y) -> x + y);}
-    public static int sum(int... numberArray) {return concatenatedOperator(numberArray, (x, y) -> x + y);}
-//    {    double counter = 0;
-//        for (double d : numberArray) counter += d;
-//        return counter;
-//    }
+    public static double sum(double... numberArray) //{return concatenatedOperator(numberArray, (x, y) -> x + y);}
+    {
+        return DoubleStream.of(numberArray)
+            .reduce(0, (x, y) -> x+y);
+    }
+    public static int sum(int... numberArray) //{return concatenatedOperator(numberArray, (x, y) -> x + y);}
+    {
+        return IntStream.of(numberArray)
+            .reduce(0, (x, y) -> x+y);
+    }
     // Multiplies all elements of a numeric array.
-    public static double mult(double... numberArray) {return concatenatedOperator(numberArray, (x, y) -> x * y);}
-    public static int mult(int... numberArray) {return concatenatedOperator(numberArray, (x, y) -> x * y);}
-    
+    public static double mult(double... numberArray) //{return concatenatedOperator(numberArray, (x, y) -> x * y);}
+    {
+        return DoubleStream.of(numberArray)
+            .reduce(1, (x, y) -> x*y);
+    }
+    public static int mult(int... numberArray) //{return concatenatedOperator(numberArray, (x, y) -> x * y);}
+    {
+        return IntStream.of(numberArray)
+            .reduce(1, (x, y) -> x*y);
+    }
+            
     // Calculates the average of all elements of a numeric array.
     public static double average(double... numberArray) {return sum(numberArray)/numberArray.length;}
     
