@@ -938,9 +938,25 @@ public class CalcUtil {
     /*
     * TO DO: Find how to implement the concatenatedOperator method with streams.
     * Current problems:
-    *   .reduce(BinaryOperator) returns an Optional, which can't be cast.
+    *   .reduce(BinaryOperator) returns an Optional.
     *   Need to find how to implement the startAtBeginning state
     */
+    public static <T> T concatenatedOperator(
+        T[] targetArray,            // Array to operate on.
+        BinaryOperator<T> operator  // Operator to apply to the array.    
+    ) {
+        return Stream.of(targetArray)
+            .reduce(operator)
+            .get();
+    }
+    public static <T> T concatenatedOperator(
+        List<T> targetArray,        // Array to operate on.
+        BinaryOperator<T> operator  // Operator to apply to the array.    
+    ) {
+        return targetArray.stream()
+            .reduce(operator)
+            .get();
+    }
     public static <T> T concatenatedOperator(
         T[] targetArray,                // Array to operate on.
         BiFunction<T, T, T> operator,   // Operator to apply to the array.
@@ -1060,12 +1076,12 @@ public class CalcUtil {
     public static double sum(double... numberArray) //{return concatenatedOperator(numberArray, (x, y) -> x + y);}
     {
         return DoubleStream.of(numberArray)
-            .reduce(0, (x, y) -> x+y);
+            .sum();
     }
     public static int sum(int... numberArray) //{return concatenatedOperator(numberArray, (x, y) -> x + y);}
     {
         return IntStream.of(numberArray)
-            .reduce(0, (x, y) -> x+y);
+            .sum();
     }
     // Multiplies all elements of a numeric array.
     public static double mult(double... numberArray) //{return concatenatedOperator(numberArray, (x, y) -> x * y);}
@@ -1080,21 +1096,32 @@ public class CalcUtil {
     }
             
     // Calculates the average of all elements of a numeric array.
-    public static double average(double... numberArray) {return sum(numberArray)/numberArray.length;}
-    
+    public static double average(double... numberArray) //{return sum(numberArray)/numberArray.length;}
+    {
+        return DoubleStream.of(numberArray)
+            .average()
+            .getAsDouble();
+    }
+            
     // Calculates the geometric average of all elements of a numeric array
-    public static double geometricAverage(double... numberArray) {return Math.pow(CalcUtil.mult(numberArray), 1/numberArray.length);}
+    public static double geometricAverage(double... numberArray) {return Math.pow(mult(numberArray), 1/numberArray.length);}
     
     // Finds the maximum value of a numeric array.
     public static double maximum(double... numberArray) {
-        double max = Double.MIN_VALUE;
-        for (double d : numberArray) if (d > max) max = d;
-        return max;
+        return DoubleStream.of(numberArray)
+            .max()
+            .getAsDouble();
+//        double max = Double.MIN_VALUE;
+//        for (double d : numberArray) if (d > max) max = d;
+//        return max;
     }
     public static int maximum(int... numberArray) {
-        int max = Integer.MIN_VALUE;
-        for (int n : numberArray) if (n > max) max = n;
-        return max;
+        return IntStream.of(numberArray)
+            .max()
+            .getAsInt();
+//        int max = Integer.MIN_VALUE;
+//        for (int n : numberArray) if (n > max) max = n;
+//        return max;
     }
     
     // Returns an int[] array of all indexes where the maximum value is found.
@@ -1129,14 +1156,20 @@ public class CalcUtil {
     
     // Finds the minimum value of a numeric array.
     public static double minimum(double... numberArray) {
-        double min = Double.MAX_VALUE;
-        for (double d : numberArray) if (d < min) min = d;
-        return min;
+        return DoubleStream.of(numberArray)
+            .min()
+            .getAsDouble();
+//        double min = Double.MAX_VALUE;
+//        for (double d : numberArray) if (d < min) min = d;
+//        return min;
     }
     public static int minimum(int... numberArray) {
-        int min = Integer.MAX_VALUE;
-        for (int n : numberArray) if (n < min) min = n;
-        return min;
+        return IntStream.of(numberArray)
+            .min()
+            .getAsInt();
+//        int min = Integer.MAX_VALUE;
+//        for (int n : numberArray) if (n < min) min = n;
+//        return min;
     }
     // Returns an int[] array of all indexes where the maximum value is found.
     public static int[] minIndexes(double[] numberArray) {
@@ -1678,7 +1711,7 @@ public class CalcUtil {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="ODE resolution">
-    // TO DO
+    // TO DO: Description, general work in the current methods and add new ones.
     
     /*
     * Returns an array of doubles of size n+1, with initial value initValue,
@@ -1775,11 +1808,11 @@ public class CalcUtil {
         for (int i = 1; i <= n; i++) {
             int j = i;
             Function<Double, Double> fixedPointFunction = z -> y[j-1] + step * f.apply(x[j], z);
-            y[i] = rootFinderMethod(fixedPointFunction, Newton(fixedPointFunction), 1, 1e-6, 100, false);
+            y[i] = rootFinderMethod(z -> fixedPointFunction.apply(z) - z, Newton(fixedPointFunction), 1, 1e-6, 100, false);
         }
         return y;
         
-        /* Testing block for thebackward Euler method:
+        /* Testing block for the backward Euler method:
         BiFunction<Double, Double, Double> f = (x, t) -> x;
         double initValue = 0;
         double finValue = 1;
