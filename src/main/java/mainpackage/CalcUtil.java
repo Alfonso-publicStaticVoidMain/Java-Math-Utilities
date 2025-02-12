@@ -65,356 +65,6 @@ public class CalcUtil {
         }
     };
     
-    // <editor-fold defaultstate="collapsed" desc="String methods">
-    /*
-    * Contains a small number of methods dealing with Strings and some basic
-    * functionalities that you may need when dealing with them.
-    *
-    * Contains the following methods:
-    *   countChar: Counts the number of appearences of a character within a String.
-    *   generatePassword: Randomly generated a password drawing from a String of avaliable characters, with or without repetition.
-    *   shuffle: Randomly reorders the characters within a String.
-    *   isInteger: Determines if a String represents an Integer in a given base.
-    *   stringToIntegerList: Returns a List of Integers that contains all the digits of the String passed.
-    */
-    
-    // Counts the number of appearences of a character within a String.
-    public static int countChar(String str, char ch) {return str.length() - str.replace(Character.toString(ch), "").length();}
-    
-    /*
-    * Generates a password String randomly selecting from a String of avaliable 
-    * characters, with or without repetition, as desired.
-    *
-    * Will throw an error if you enter a length greater than the length
-    * of the avaliable chararacters String without allowing repetition
-    */
-    public static String generatePassword(String avaliableChars, int len, boolean allowRepetition) {
-        StringBuilder copyAvaliableChars = new StringBuilder(avaliableChars);
-        String password = "";
-        Random r = new Random();
-        for (int i = 0; i < len; i++) {
-            int randomNumber = r.nextInt(avaliableChars.length());
-            password = password + copyAvaliableChars.charAt(randomNumber);
-            if (!allowRepetition) copyAvaliableChars.deleteCharAt(randomNumber);
-        }
-        return password;
-    }
-    
-    // Returns a random reordering of the given String.
-    public static String shuffle(String str) {
-        StringBuilder strBuilder = new StringBuilder(str);
-        String result = "";
-        Random r = new Random();
-        while (strBuilder.length() != 0) {
-            int randomNumber = r.nextInt(strBuilder.length());
-            result = result + strBuilder.charAt(randomNumber);
-            strBuilder.deleteCharAt(randomNumber);
-        }
-        return result;
-    }
-    
-    /*
-    * Return true if the String is an integer in the given base, false otherwise.
-    * If the base is unspecified, it's assumed 10.
-    */
-    public static boolean isInteger(String str, int base) {
-        try {
-            Integer.parseInt(str, base);
-            return true;
-        } catch (Exception e) {return false;}
-    }
-    public static boolean isInteger(String str) {return isInteger(str, 10);}
-
-    // </editor-fold>
-    
-    // <editor-fold defaultstate="collapsed" desc="Array Index methods">
-    /*
-    * Contains a number of methods that deal with index positions within an array,
-    * finding the indexes of elements, the number of appearences, and deleting duplicates.
-    *
-    * Contains the following methods, implemented both for arrays/Lists of
-    * generic T classes, int or double:
-    *   onlyIndexCondition: Returns -2 if no element of the array/List satisfies a given condition, -1 if more than one does, or n >= 0 if n is the index of the only element that does.
-    *   firstIndexOf: Returns the index of the first appearence of an element in an array, -1 if it doesn't appear.
-    *   lastIndexOf: Returns the index of the last appearence of an element in an array, -1 if it doesn't appear.
-    *   allIndexesOf: Returns an integer array with the indexes of all apearences of an element in an array.
-    *   firstIndexThatSatisfiesCondition: Returns the index of the first appearence of an element that satisfies a condition.
-    *   lastIndexThatSatisfiesCondition: Returns the index of the last appearence of an element that satisfies a condition.
-    *   appearsExactlyOnce: Returns true if an element appears exactly once in an array, false otherwise.
-    *   appearsMoreThanOnce: Returns true if an element appears more than once in an array, false otherwise.
-    *   appearsZeroTimes: Returns true if an element appears exactly zero times in an array, false otherwise.
-    *   contains: Returns true if an element appears one or more times in an array, false otherwise.
-    *   deleteLastDuplicates: Deletes all but the first appearence of each element of an array.
-    *   deleteFirstDuplicates: Deletes all but the last appearence of each element of an array.
-    */
-    
-    
-    /*
-    * This following method will return:
-    *    -2 if no element satisfies the condition.
-    *    -1 if more than one element satisfies the condition.
-    *    n >= 0 if exactly one element satisfies the condition, with index n.
-    */
-    public static <T> int onlyIndexCondition(T[] targetArray, Function<T, Boolean> condition) {
-        int index = -2;
-        boolean found = false;
-        for (int i = 0; i < targetArray.length; i++) {
-            if (!found && condition.apply(targetArray[i])) {
-                index = i;
-                found = true;
-            } else if (found && condition.apply(targetArray[i])) index = -1;
-            if (found && index == -1) break;
-        }
-        return index;
-    }
-    public static <T> int onlyIndexCondition(List<T> targetArray, Function<T, Boolean> condition) {
-        int index = -2;
-        boolean found = false;
-        for (int i = 0; i < targetArray.size(); i++) {
-            if (!found && condition.apply(targetArray.get(i))) {
-                index = i;
-                found = true;
-            } else if (found && condition.apply(targetArray.get(i))) index = -1;
-            if (found && index == -1) break;
-        }
-        return index;
-    }  
-    public static int onlyIndexCondition(double[] doubleArray, Function<Double, Boolean> condition) {
-        int index = -2;
-        boolean found = false;
-        for (int i = 0; i < doubleArray.length; i++) {
-            if (!found && condition.apply(doubleArray[i])) {
-                index = i;
-                found = true;
-            } else if (found && condition.apply(doubleArray[i])) index = -1;
-            if (found && index == -1) break;
-        }
-        return index;
-    }
-    public static int onlyIndexCondition(int[] intArray, Function<Integer, Boolean> condition) {
-        int index = -2;
-        boolean found = false;
-        for (int i = 0; i < intArray.length; i++) {
-            if (!found && condition.apply(intArray[i])) {
-                index = i;
-                found = true;
-            } else if (found && index != -1 && condition.apply(intArray[i])) index = -1;
-            if (found && index == -1) break;
-        }
-        return index;
-    }
-    
-    /*
-    * Returns the index of the first appearence of an element in an array,
-    * or -1 if it isn't present.
-    */
-    public static <T> int firstIndexOf(T[] targetArray, T t) {
-        for (int i = 0; i < targetArray.length; i++) if (targetArray[i].equals(t)) return i;
-        return -1;
-    }
-    public static int firstIndexOf(double[] doubleArray, double d) {
-        for (int i = 0; i < doubleArray.length; i++) if (doubleArray[i] == d) return i;
-        return -1;
-    }
-    public static int firstIndexOf(int[] intArray, int n) {
-        for (int i = 0; i < intArray.length; i++) if (intArray[i] == n) return i;
-        return -1;
-    }
-    
-    // Returns the index of the last appearence of an element in an array, or -1 if it isn't present.
-    public static <T> int lastIndexOf(T[] targetArray, T tElement) {
-        for (int i = targetArray.length - 1; i >= 0; i--) if (targetArray[i].equals(tElement)) return i;
-        return -1;
-    }
-    public static int lastIndexOf(double[] doubleArray, double d) {
-        for (int i = doubleArray.length - 1; i >= 0; i--) if (doubleArray[i] == d) return i;
-        return -1;
-    }
-    public static int lastIndexOf(int[] intArray, int n) {
-        for (int i = intArray.length - 1; i >= 0; i--) if (intArray[i] == n) return i;
-        return -1;
-    }
-    
-    /*
-    * Returns an int[] array of all the indexes where a possible element of an
-    * array appears, or an empty array if it isn't in the array.
-    */
-    public static <T> int[] allIndexesOf(T[] targetArray, T t) {
-        List<Integer> listOfIndexes = new LinkedList<>();
-        for (int i = 0; i < targetArray.length; i++) if (targetArray[i].equals(t)) listOfIndexes.add(i);
-        return intListToIntArray(listOfIndexes);
-    }
-    public static int[] allIndexesOf(double[] doubleArray, double d) {
-        List<Integer> listOfIndexes = new LinkedList<>();
-        for (int i = 0; i < doubleArray.length; i++) if (doubleArray[i] == d) listOfIndexes.add(i);
-        return intListToIntArray(listOfIndexes);
-    }
-    public static int[] allIndexesOf(int[] intArray, int n) {
-        List<Integer> listOfIndexes = new LinkedList<>();
-        for (int i = 0; i < intArray.length; i++) if (intArray[i] == n) listOfIndexes.add(i);
-        return intListToIntArray(listOfIndexes);
-    }
-    
-    /*
-    * Returns the index of the first element of an array that satisfies the
-    * given condition, or -1 if no element does.
-    */
-    public static <T> int firstIndexThatSatisfiesCondition(T[] targetArray, Function<T, Boolean> condition) {
-        for (int i = 0; i < targetArray.length; i++) if (condition.apply(targetArray[i])) return i;
-        return -1;
-    }
-    public static int firstIndexThatSatisfiesCondition(List<Integer> targetArray, Function<Integer, Boolean> condition) {
-        for (int i = 0; i < targetArray.size(); i++) if (condition.apply(targetArray.get(i))) return i;
-        return -1;
-    }
-    public static int firstIndexThatSatisfiesCondition(double[] doubleArray, Function<Double, Boolean> condition) {
-        for (int i = 0; i < doubleArray.length; i++) if (condition.apply(doubleArray[i])) return i;
-        return -1;
-    }
-    public static int firstIndexThatSatisfiesCondition(int[] intArray, Function<Integer, Boolean> condition) {
-        for (int i = 0; i < intArray.length; i++) if (condition.apply(intArray[i])) return i;
-        return -1;
-    }
-    
-    /*
-    * Returns the index of the last element of an array that satisfies the
-    * given condition, or -1 if no element does.
-    */
-    public static <T> int lastIndexThatSatisfiesCondition(T[] targetArray, Function<T, Boolean> condition) {
-        for (int i = targetArray.length - 1; i >= 0; i--) if (condition.apply(targetArray[i])) return i;
-        return -1;
-    }
-    public static <T> int lastIndexThatSatisfiesCondition(List<T> targetArray, Function<T, Boolean> condition) {
-        for (int i = targetArray.size() - 1; i >= 0; i--) if (condition.apply(targetArray.get(i))) return i;
-        return -1;
-    }
-    public static int lastIndexThatSatisfiesCondition(double[] doubleArray, Function<Double, Boolean> condition) {
-        for (int i = doubleArray.length - 1; i >= 0; i--) if (condition.apply(doubleArray[i])) return i;
-        return -1;
-    }
-    public static int lastIndexThatSatisfiesCondition(int[] intArray, Function<Integer, Boolean> condition) {
-        for (int i = intArray.length - 1; i >= 0; i--) if (condition.apply(intArray[i])) return i;
-        return -1;
-    }
-    
-    // Returns true if the element appears exactly once in the array, false otherwise.
-    public static <T> boolean appearsExactlyOnce(T[] targetArray, T t) {return firstIndexOf(targetArray, t) != -1 && firstIndexOf(targetArray, t) == lastIndexOf(targetArray, t);}
-    public static boolean appearsExactlyOnce(double[] doubleArray, double d) {return firstIndexOf(doubleArray, d) != -1 && firstIndexOf(doubleArray, d) == lastIndexOf(doubleArray, d);}
-    public static boolean appearsExactlyOnce(int[] intArray, int n) {return firstIndexOf(intArray, n) != -1 && firstIndexOf(intArray, n) == lastIndexOf(intArray, n);}
-    
-    // Returns true if the element appears more than once in the array, false otherwise.
-    public static <T> boolean appearsMoreThanOnce(T[] targetArray, T t) {return firstIndexOf(targetArray, t) != -1 && firstIndexOf(targetArray, t) != lastIndexOf(targetArray, t);}
-    public static boolean appearsMoreThanOnce(double[] doubleArray, double d) {return firstIndexOf(doubleArray, d) != -1 && firstIndexOf(doubleArray, d) != lastIndexOf(doubleArray, d);}
-    public static boolean appearsMoreThanOnce(int[] intArray, int n) {return firstIndexOf(intArray, n) != -1 && firstIndexOf(intArray, n) != lastIndexOf(intArray, n);}
-    
-    // Return true if the element doesn't appear in the array, false otherwise.
-    public static <T> boolean appearsZeroTimes(T[] targetArray, T t) {return firstIndexOf(targetArray, t) == -1;}
-    public static boolean appearsZeroTimes(double[] doubleArray, double d) {return firstIndexOf(doubleArray, d) == -1;}
-    public static boolean appearsZeroTimes(int[] intArray, int n) {return firstIndexOf(intArray, n) == -1;}
-    
-    // Returns true if the array contains the passed element, false otherwise.
-    public static <T> boolean contains(T[] targetArray, T tElement) {
-        for (T t : targetArray) if (t.equals(tElement)) return true;
-        return false;
-    }
-    public static boolean contains(double[] doubleArray, double d) {
-        for (double t : doubleArray) if (t == d) return true;
-        return false;
-    }
-    public static boolean contains(int[] intArray, int n) {
-        for (int t : intArray) if (t == n) return true;
-        return false;
-    }
-    
-    // Deletes all but the first appearence of duplicate elements in an array.
-    public static <T> List<T> deleteLastDuplicates(T[] targetArray) {
-        List<T> result = new ArrayList(Arrays.asList(targetArray[0]));
-        for (int i = 1; i < targetArray.length; i++) {
-            boolean foundDuplicate = false;
-            for (int j = 0; j < result.size(); j++) {
-                if (targetArray[i].equals(result.get(j))) {
-                    foundDuplicate = true;
-                    break;
-                }
-            }
-            if (!foundDuplicate) result.add(targetArray[i]);
-        }
-        return result;
-    }
-    public static List<Double> deleteLastDuplicates(double[] doubleArray) {
-        List<Double> result = new ArrayList(Arrays.asList(doubleArray[0]));
-        for (int i = 1; i < doubleArray.length; i++) {
-            boolean foundDuplicate = false;
-            for (int j = 0; j < result.size(); j++) {
-                if (doubleArray[i] == result.get(j)) {
-                    foundDuplicate = true;
-                    break;
-                }
-            }
-            if (!foundDuplicate) result.add(doubleArray[i]);
-        }
-        return result;
-    }
-    public static List<Integer> deleteLastDuplicates(int[] intArray) {
-        List<Integer> result = new ArrayList(Arrays.asList(intArray[0]));
-        for (int i = 1; i < intArray.length; i++) {
-            boolean foundDuplicate = false;
-            for (int j = 0; j < result.size(); j++) {
-                if (intArray[i] == result.get(j)) {
-                    foundDuplicate = true;
-                    break;
-                }
-            }
-            if (!foundDuplicate) result.add(intArray[i]);
-        }
-        return result;
-    }
-    
-    // Deletes all but the last appearence of duplicate elements in an array.
-    public static <T> List<T> deleteFirstDuplicates(T[] targetArray) {
-        List<T> result = new ArrayList(Arrays.asList(targetArray[targetArray.length - 1]));
-        for (int i = targetArray.length - 2; i >= 0 ; i--) {
-            boolean foundDuplicate = false;
-            for (int j = 0; j < result.size(); j++) {
-                if (targetArray[i].equals(result.get(j))) {
-                    foundDuplicate = true;
-                    break;
-                }
-            }
-            if (!foundDuplicate) result.add(targetArray[i]);
-        }
-        return result.reversed();
-    }
-    public static List<Double> deleteFirstDuplicates(double[] doubleArray) {
-        List<Double> result = new ArrayList(Arrays.asList(doubleArray[doubleArray.length - 1]));
-        for (int i = doubleArray.length - 2; i >= 0 ; i--) {
-            boolean foundDuplicate = false;
-            for (int j = 0; j < result.size(); j++) {
-                if (doubleArray[i] == result.get(j)) {
-                    foundDuplicate = true;
-                    break;
-                }
-            }
-            if (!foundDuplicate) result.add(doubleArray[i]);
-        }
-        return result.reversed();
-    }
-    public static List<Integer> deleteFirstDuplicates(int[] intArray) {
-        List<Integer> result = new ArrayList(Arrays.asList(intArray[intArray.length - 1]));
-        for (int i = intArray.length - 2; i >= 0 ; i--) {
-            boolean foundDuplicate = false;
-            for (int j = 0; j < result.size(); j++) {
-                if (intArray[i] == result.get(j)) {
-                    foundDuplicate = true;
-                    break;
-                }
-            }
-            if (!foundDuplicate) result.add(intArray[i]);
-        }
-        return result.reversed();
-    }
-    // </editor-fold>
-    
     // <editor-fold defaultstate="collapsed" desc="Array Condition methods">
     /*
     * Contains a number of methods that aim to describe or modify arrays and/or
@@ -444,53 +94,99 @@ public class CalcUtil {
     * Counts the number of elements that satisfy a given condition on their
     * value and position.
     */
-    public static <T> int countCondition(
+    public static <T> long countCondition(
         T[] targetArray,
-        BiFunction<T, Integer, Boolean> condition
+        BiPredicate<T, Integer> condition
     ) {
-        int counter = 0;
-        for (int i = 0; i < targetArray.length; i++) if (condition.apply(targetArray[i], i)) counter++;
-        return counter;
+        return IntStream.range(0, targetArray.length)
+            .filter(i -> condition.test(targetArray[i], i))
+            .count();
+//        int counter = 0;
+//        for (int i = 0; i < targetArray.length; i++) if (condition.apply(targetArray[i], i)) counter++;
+//        return counter;
     }
-    public static <T> int countCondition(
+    public static <T> long countCondition(
         List<T> targetArray,
-        BiFunction<T, Integer, Boolean> condition
+        BiPredicate<T, Integer> condition
     ) {
-        int counter = 0;
-        for (int i = 0; i < targetArray.size(); i++) if (condition.apply(targetArray.get(i), i)) counter++;
-        return counter;
+        return IntStream.range(0, targetArray.size())
+            .filter(i -> condition.test(targetArray.get(i), i))
+            .count();
+//        int counter = 0;
+//        for (int i = 0; i < targetArray.size(); i++) if (condition.apply(targetArray.get(i), i)) counter++;
+//        return counter;
     }
-    public static int countCondition(
+    public static long countCondition(
         double[] doubleArray,
-        BiFunction<Double, Integer, Boolean> condition
+        BiPredicate<Double, Integer> condition
     ) {
-        int counter = 0;
-        for (int i = 0; i < doubleArray.length; i++) if (condition.apply(doubleArray[i], i)) counter++;
-        return counter;
+        return IntStream.range(0, doubleArray.length)
+            .filter(i -> condition.test(doubleArray[i], i))
+            .count();
+//        int counter = 0;
+//        for (int i = 0; i < doubleArray.length; i++) if (condition.apply(doubleArray[i], i)) counter++;
+//        return counter;
     }
-    public static int countCondition(
+    public static long countCondition(
         int[] intArray,
-        BiFunction<Integer, Integer, Boolean> condition
+        BiPredicate<Integer, Integer> condition
     ) {
-        int counter = 0;
-        for (int i = 0; i < intArray.length; i++) if (condition.apply(intArray[i], i)) counter++;
-        return counter;
+        return IntStream.range(0, intArray.length)
+            .filter(i -> condition.test(intArray[i], i))
+            .count();
+//        int counter = 0;
+//        for (int i = 0; i < intArray.length; i++) if (condition.apply(intArray[i], i)) counter++;
+//        return counter;
     }
-    public static int countCondition(boolean[] booleanArray, BiFunction<Boolean, Integer, Boolean> condition) {
-        int counter = 0;
-        for (int i = 0; i < booleanArray.length; i++) if (condition.apply(booleanArray[i], i)) counter++;
-        return counter;
+    public static long countCondition(
+        boolean[] booleanArray,
+        BiPredicate<Boolean, Integer> condition
+    ) {
+        return IntStream.range(0, booleanArray.length)
+            .filter(i -> condition.test(booleanArray[i], i))
+            .count();
+//        int counter = 0;
+//        for (int i = 0; i < booleanArray.length; i++) if (condition.apply(booleanArray[i], i)) counter++;
+//        return counter;
     }
     
     /*
     * Counts the number of elements that satisfy a given condition on
     * just their value.
     */
-    public static <T> int countCondition(T[] targetArray, Predicate<T> condition) {return countCondition(targetArray, (n, i) -> condition.test(n));}
-    public static <T> int countCondition(List<T> targetArray, Predicate<T> condition) {return countCondition(targetArray, (n, i) -> condition.test(n));}
-    public static int countCondition(double[] doubleArray, Predicate<Double> condition) {return countCondition(doubleArray, (n, i) -> condition.test(n));}
-    public static int countCondition(int[] intArray, Predicate<Integer> condition) {return countCondition(intArray, (n, i) -> condition.test(n));}
-    public static int countCondition(boolean[] booleanArray, Predicate<Boolean> condition) {return countCondition(booleanArray, (n, i) -> condition.test(n));}
+    public static <T> long countCondition(
+        T[] targetArray,
+        Predicate<T> condition
+    ) {//return countCondition(targetArray, (n, i) -> condition.test(n));}
+        return Stream.of(targetArray)
+            .filter(condition)
+            .count();
+    }
+    public static <T> long countCondition(
+        List<T> targetArray,
+        Predicate<T> condition
+    ) {//return countCondition(targetArray, (n, i) -> condition.test(n));}
+        return targetArray.stream()
+            .filter(condition)
+            .count();
+    }
+    public static long countCondition(
+        double[] doubleArray,
+        DoublePredicate condition
+    ) {//return countCondition(doubleArray, (n, i) -> condition.test(n));}
+        return DoubleStream.of(doubleArray)
+            .filter(condition)
+            .count();
+    }
+    public static long countCondition(
+        int[] intArray,
+        IntPredicate condition
+    ) {//return countCondition(intArray, (n, i) -> condition.test(n));}
+        return IntStream.of(intArray)
+            .filter(condition)
+            .count();
+    }
+    public static long countCondition(boolean[] booleanArray, Predicate<Boolean> condition) {return countCondition(booleanArray, (n, i) -> condition.test(n));}
     
     // Deletes elements from the beginning and/or end, if they satisfy the condition.
     public static <T> T[] deleteExteriorIfCondition(
@@ -498,7 +194,7 @@ public class CalcUtil {
         Predicate<T> condition,         // Condition that needs to be satisfied by the elements deleted.
         boolean deleteFromBeginning,    // Set to true if you want to delete from the beginning.
         boolean deleteFromEnd           // Set to true if you want to delete form the end.
-    ) {
+    ) { 
         int len = targetArray.length;
         int initIndex = 0, finalIndex = len;
         boolean initFound = false, finalFound = false;
@@ -707,22 +403,6 @@ public class CalcUtil {
     * bifunctions, that are meant to be applied to the pair (t, i), where
     * i is the index of the element t.
     */
-    
-    /* TO DO: Reimplement the applyFunction methods using streams. Examples:
-    
-    public static <T, U> List<U> applyFunction(List<T> t, Function<T, U> f) {
-        return t.stream()
-            .map(f)
-            .collect(Collectors.toCollection(ArrayList::new));
-    }
-    
-    public static <T, U> List<U> applyFunction(List<T> t, BiFunction<T, Integer, U> f) {
-        return IntStream.range(0, t.size())
-           .mapToObj(i -> f.apply(t.get(i), i))
-           .collect(Collectors.toCollection(ArrayList::new));
-    }
-    
-    */
     public static <T, U> List<U> applyFunction(
         List<T> targetArray,            // List to apply the function to.
         BiFunction<T, Integer, U> f     // BiFunction to apply to the list.
@@ -806,11 +486,11 @@ public class CalcUtil {
     * their value.
     */
     public static <T, U extends T> List<T> applyFunctionIfCondition(
-        T[] targetArray,                            // Array to apply the function to.
-        BiFunction<T, Integer, Boolean> condition,  // BiFunction to apply to the array.
-        BiFunction<T, Integer, U> f                 // Condition on element and index to satisfy for the function to be applied.
+        T[] targetArray,                    // Array to apply the function to.
+        BiPredicate<T, Integer> condition,  // BiFunction to apply to the array.
+        BiFunction<T, Integer, U> f         // Condition on element and index to satisfy for the function to be applied.
     ) {
-        return applyFunction(targetArray, (x, i) -> condition.apply(x, i) ? f.apply(x, i) : x);
+        return applyFunction(targetArray, (x, i) -> condition.test(x, i) ? f.apply(x, i) : x);
 //        List<T> result = new LinkedList<>();
 //        for (int i = 0; i < targetArray.length; i++) {
 //            if (condition.apply(targetArray[i], i)) result.add(f.apply(targetArray[i], i));
@@ -826,9 +506,9 @@ public class CalcUtil {
         //{return applyFunctionIfCondition(targetArray, (x, i) -> condition.apply(x), f);}
     public static <T, U extends T> List<T> applyFunctionIfCondition(
         T[] targetArray,
-        BiFunction<T, Integer, Boolean> condition,
+        BiPredicate<T, Integer> condition,
         Function<T, U> f
-    ) {return applyFunction(targetArray, (x, i) -> condition.apply(x, i) ? f.apply(x) : x);}
+    ) {return applyFunction(targetArray, (x, i) -> condition.test(x, i) ? f.apply(x) : x);}
         //{return applyFunctionIfCondition(targetArray, condition, (x, i) -> f.apply(x));}
     public static <T, U extends T> List<T> applyFunctionIfCondition(
         T[] targetArray,
@@ -837,11 +517,11 @@ public class CalcUtil {
     ) {return applyFunction(targetArray, (x, i) -> condition.test(x) ? f.apply(x) : x);}
     //{return applyFunctionIfCondition(targetArray, (x, i) -> condition.apply(x), (x, i) -> f.apply(x));}
     public static <T, U extends T> List<T> applyFunctionIfCondition(
-        List<T> targetArray,                        // List to apply the function to.
-        BiFunction<T, Integer, Boolean> condition,  // BiFunction to apply to the List.
-        BiFunction<T, Integer, U> f                 // Condition on element and index to satisfy for the function to be applied.
+        List<T> targetArray,                // List to apply the function to.
+        BiPredicate<T, Integer> condition,  // BiFunction to apply to the List.
+        BiFunction<T, Integer, U> f         // Condition on element and index to satisfy for the function to be applied.
     ) {
-        return applyFunction(targetArray, (x, i) -> condition.apply(x, i) ? f.apply(x, i) : x);
+        return applyFunction(targetArray, (x, i) -> condition.test(x, i) ? f.apply(x, i) : x);
 //        List<T> result = new LinkedList<>();
 //        for (int i = 0; i < targetArray.size(); i++) if (condition.apply(targetArray.get(i), i)) result.add(f.apply(targetArray.get(i), i));
 //        return result;
@@ -854,9 +534,9 @@ public class CalcUtil {
     //{return applyFunctionIfCondition(targetArray, (x, i) -> condition.apply(x), f);}
     public static <T, U extends T> List<T> applyFunctionIfCondition(
         List<T> targetArray,
-        BiFunction<T, Integer, Boolean> condition,
+        BiPredicate<T, Integer> condition,
         Function<T, U> f
-    ) {return applyFunction(targetArray, (x, i) -> condition.apply(x, i) ? f.apply(x) : x);}
+    ) {return applyFunction(targetArray, (x, i) -> condition.test(x, i) ? f.apply(x) : x);}
     //{return applyFunctionIfCondition(targetArray, condition, (x, i) -> f.apply(x));}
     public static <T, U extends T> List<T> applyFunctionIfCondition(
         List<T> targetArray,
@@ -866,10 +546,10 @@ public class CalcUtil {
     //{return applyFunctionIfCondition(targetArray, (x, i) -> condition.apply(x), (x, i) -> f.apply(x));}
     public static <U extends Double> double[] applyFunctionIfCondition(
         double[] doubleArray,
-        BiFunction<Double, Integer, Boolean> condition,
+        BiPredicate<Double, Integer> condition,
         BiFunction<Double, Integer, U> f
     ) {
-        return applyFunction(doubleArray, (x, i) -> condition.apply(x, i) ? f.apply(x, i) : x);
+        return applyFunction(doubleArray, (x, i) -> condition.test(x, i) ? f.apply(x, i) : x);
 //        List<Double> result = new LinkedList<>();
 //        for (int i = 0; i < doubleArray.length; i++) {
 //            if (condition.apply(doubleArray[i], i)) result.add(f.apply(doubleArray[i], i));
@@ -885,9 +565,9 @@ public class CalcUtil {
     //{return applyFunctionIfCondition(doubleArray, (x, i) -> condition.apply(x), f);}
     public static <U extends Double> double[] applyFunctionIfCondition(
         double[] doubleArray,
-        BiFunction<Double, Integer, Boolean> condition,
+        BiPredicate<Double, Integer> condition,
         Function<Double, U> f
-    ) {return applyFunction(doubleArray, (x, i) -> condition.apply(x, i) ? f.apply(x) : x);}
+    ) {return applyFunction(doubleArray, (x, i) -> condition.test(x, i) ? f.apply(x) : x);}
     //{return applyFunctionIfCondition(doubleArray, condition, (x, i) -> f.apply(x));}
     public static <U extends Double> double[] applyFunctionIfCondition(
         double[] doubleArray,
@@ -897,10 +577,10 @@ public class CalcUtil {
     //{return applyFunctionIfCondition(doubleArray, (x, i) -> condition.apply(x), (x, i) -> f.apply(x));}
     public static <U extends Integer> int[] applyFunctionIfCondition(
         int[] intArray,
-        BiFunction<Integer, Integer, Boolean> condition,
+        BiPredicate<Integer, Integer> condition,
         BiFunction<Integer, Integer, U> f
     ) {
-        return applyFunction(intArray, (x, i) -> condition.apply(x, i) ? f.apply(x, i) : x);
+        return applyFunction(intArray, (x, i) -> condition.test(x, i) ? f.apply(x, i) : x);
 //        List<Integer> result = new LinkedList<>();
 //        for (int i = 0; i < intArray.length; i++) {
 //            if (condition.apply(intArray[i], i)) result.add(f.apply(intArray[i], i));
@@ -916,9 +596,9 @@ public class CalcUtil {
     //{return applyFunctionIfCondition(intArray, (x, i) -> condition.apply(x), f);}
     public static <U extends Integer> int[] applyFunctionIfCondition(
         int[] intArray,
-        BiFunction<Integer, Integer, Boolean> condition,
+        BiPredicate<Integer, Integer> condition,
         Function<Integer, U> f
-    ) {return applyFunction(intArray, (x, i) -> condition.apply(x, i) ? f.apply(x) : x);}
+    ) {return applyFunction(intArray, (x, i) -> condition.test(x, i) ? f.apply(x) : x);}
     //{return applyFunctionIfCondition(intArray, condition, (x, i) -> f.apply(x));}
     public static <U extends Integer> int[] applyFunctionIfCondition(
         int[] intArray,
@@ -956,6 +636,22 @@ public class CalcUtil {
         return targetArray.stream()
             .reduce(operator)
             .get();
+    }
+    public static <T> T concatenatedOperator(
+        T[] targetArray,            // Array to operate on.
+        BinaryOperator<T> operator, // Operator to apply to the array. 
+        T identity                  // Identity of the operator, ie: a * id = a for all a in T.
+    ) {
+        return Stream.of(targetArray)
+            .reduce(identity, operator);
+    }
+    public static <T> T concatenatedOperator(
+        List<T> targetArray,        // Array to operate on.
+        BinaryOperator<T> operator, // Operator to apply to the array.   
+        T identity                  // Identity of the operator, ie: a * id = a for all a in T.
+    ) {
+        return targetArray.stream()
+            .reduce(identity, operator);
     }
     public static <T> T concatenatedOperator(
         T[] targetArray,                // Array to operate on.
