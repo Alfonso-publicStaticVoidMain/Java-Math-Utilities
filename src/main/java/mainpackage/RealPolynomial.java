@@ -87,18 +87,18 @@ public class RealPolynomial {
     * n >=0 -> Exactly one coefficient, with index n, is nonzero, so it can be cast to a monomial of degree n.
     */
     public int nonZeroIndex() {
-        return CalcUtil.onlyIndexCondition(this.coef, x -> x != 0);
+        //return CalcUtil.onlyIndexCondition(this.coef, x -> x != 0);
         // Old version stays commented while the newer is pending tests.
-//        double[] coefArray = this.coef;
-//        int index = -2;
-//        boolean foundNonZero = false;
-//        for (int i = 0; i < coefArray.length; i++) {
-//            if (!foundNonZero && coefArray[i] != 0) {
-//                index = i;
-//                foundNonZero = true;
-//            } else if (foundNonZero && index != -1 && coefArray[i] != 0) index = -1;
-//        }
-//        return index;
+        double[] coefArray = this.coef;
+        int index = -2;
+        boolean foundNonZero = false;
+        for (int i = 0; i < coefArray.length; i++) {
+            if (!foundNonZero && coefArray[i] != 0) {
+                index = i;
+                foundNonZero = true;
+            } else if (foundNonZero && index != -1 && coefArray[i] != 0) index = -1;
+        }
+        return index;
     }
     
     /*
