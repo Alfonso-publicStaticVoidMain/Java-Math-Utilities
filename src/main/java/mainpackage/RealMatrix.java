@@ -39,7 +39,7 @@ public class RealMatrix {
 
     public int getCols() {return this.cols;}
     
-    /*
+   /*
     * Returns true if the double[][] array is a matrix,
     * ie, if all of its entries are double[] arrays
     * of the same length, false otherwise
@@ -55,7 +55,7 @@ public class RealMatrix {
         return true;
     }
     
-    /*
+   /*
     * Returns true if the double[][] is a square matrix,
     * ie, if its a matrix and its number of columns is
     * equal to its number of rows, false otherwise.
@@ -63,7 +63,7 @@ public class RealMatrix {
     public static boolean isSquareMatrix(double[][] matrix) {return isMatrix(matrix) && matrix.length == matrix[0].length;}
     public boolean isSquareMatrix() {return this.matrix.length == this.matrix[0].length;}
     
-    /*
+   /*
     * Returns the minor of this matrix obtained when skipping the specified
     * row and column passed.
     */
@@ -81,7 +81,7 @@ public class RealMatrix {
         return smallMatrix;
     }
     
-    /*
+   /*
     * Calculates the determinant of this matrix.
     * If it isn't squared, returns NaN.
     * Cases of size 1 and 2 are calculated directly, while higher sized matrix
@@ -106,7 +106,7 @@ public class RealMatrix {
         }
     }
     
-    /*
+   /*
     * Returns the adjoint matrix of this matrix, in which each element is the
     * determinant of its associated minor matrix.
     */
@@ -121,7 +121,7 @@ public class RealMatrix {
         return adjointMatrix;
     }
     
-    /*
+   /*
     * Returns the inverse of this matrix.
     * If its determinant is zero of very close to zero (within 1e-10), it returns
     * an empty metrix instead.
@@ -183,7 +183,7 @@ public class RealMatrix {
         return colVector(this.getCol(col));
     }
     
-    /*
+   /*
     * Returns the result of multiplying A to this matrix.
     * If dimensions aren't compatible, an empty matrix is returned.
     * For dimensions to be compatible, the number of columns of this must
@@ -260,7 +260,7 @@ public class RealMatrix {
     // Returns a linear function obtained by applying this matrix to each vector.
     public Function<double[], double[]> toFunction() {return x -> this.applyToVector(x);}
     
-    /*
+   /*
     * Prints this matrix with the following format:
     *    (a11, a12, a13, a14)
     *    (a21, a22, a23, a24)
