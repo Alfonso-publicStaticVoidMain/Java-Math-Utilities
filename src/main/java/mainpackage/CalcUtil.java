@@ -726,6 +726,7 @@ public class CalcUtil {
     *   module: Returns the module of a number array when viewed as a vector.
     *   vectorOf: Returns a number array with all of its elements equal to a certain double value.
     *   multByScalar: Multiplies each element of a number array by a certain double value.
+    *   partitionInterval: Partitions a real interval in equally-sized subintervals.
     */
     
     // Copies a List<Double> to a double[] array.
@@ -822,32 +823,38 @@ public class CalcUtil {
     
     // Returns an int[] array of all indexes where the maximum value is found.
     public static int[] maxIndexes(double[] numberArray) {
-        List<Integer> result = new LinkedList<>();
-        double max = Double.MIN_VALUE;
-        for (int i = 0; i < numberArray.length; i++) {
-            double d = numberArray[i];
-            if (d == max) result.add(i);
-            else if (d > max) {
-                max = d;
-                result.clear();
-                result.add(i);
-            }
-        }
-        return intListToIntArray(result);
+//        List<Integer> result = new LinkedList<>();
+        double max = maximum(numberArray);
+        return IntStream.range(0, numberArray.length)
+            .filter(i -> numberArray[i] == max)
+            .toArray();       
+//        for (int i = 0; i < numberArray.length; i++) {
+//            double d = numberArray[i];
+//            if (d == max) result.add(i);
+//            else if (d > max) {
+//                max = d;
+//                result.clear();
+//                result.add(i);
+//            }
+//        }
+//        return intListToIntArray(result);
     }
     public static int[] maxIndexes(int[] numberArray) {
-        List<Integer> result = new LinkedList<>();
-        int max = Integer.MIN_VALUE;
-        for (int i = 0; i < numberArray.length; i++) {
-            int n = numberArray[i];
-            if (n == max) result.add(i);
-            else if (n > max) {
-                max = n;
-                result.clear();
-                result.add(i);
-            }
-        }
-        return intListToIntArray(result);
+//        List<Integer> result = new LinkedList<>();
+        int max = maximum(numberArray);
+        return IntStream.range(0, numberArray.length)
+            .filter(i -> numberArray[i] == max)
+            .toArray();
+//        for (int i = 0; i < numberArray.length; i++) {
+//            int n = numberArray[i];
+//            if (n == max) result.add(i);
+//            else if (n > max) {
+//                max = n;
+//                result.clear();
+//                result.add(i);
+//            }
+//        }
+//        return intListToIntArray(result);
     }
     
     // Finds the minimum value of a numeric array.
@@ -869,60 +876,69 @@ public class CalcUtil {
     }
     // Returns an int[] array of all indexes where the maximum value is found.
     public static int[] minIndexes(double[] numberArray) {
-        List<Integer> result = new LinkedList<>();
-        double min = Double.MAX_VALUE;
-        for (int i = 0; i < numberArray.length; i++) {
-            double d = numberArray[i];
-            if (d == min) result.add(i);
-            else if (d < min) {
-                min = d;
-                result.clear();
-                result.add(i);
-            }
-        }
-        return intListToIntArray(result);
+//        List<Integer> result = new LinkedList<>();
+        double min = minimum(numberArray);
+        return IntStream.range(0, numberArray.length)
+            .filter(i -> numberArray[i] == min)
+            .toArray();
+//        for (int i = 0; i < numberArray.length; i++) {
+//            double d = numberArray[i];
+//            if (d == min) result.add(i);
+//            else if (d < min) {
+//                min = d;
+//                result.clear();
+//                result.add(i);
+//            }
+//        }
+//        return intListToIntArray(result);
     }
     public static int[] minIndexes(int[] numberArray) {
-        List<Integer> result = new LinkedList<>();
-        int min = Integer.MIN_VALUE;
-        for (int i = 0; i < numberArray.length; i++) {
-            int n = numberArray[i];
-            if (n == min) result.add(i);
-            else if (n < min) {
-                min = n;
-                result.clear();
-                result.add(i);
-            }
-        }
-        return intListToIntArray(result);
+//        List<Integer> result = new LinkedList<>();
+        int min = minimum(numberArray);
+        return IntStream.range(0, numberArray.length)
+            .filter(i -> numberArray[i] == min)
+            .toArray();
+//        for (int i = 0; i < numberArray.length; i++) {
+//            int n = numberArray[i];
+//            if (n == min) result.add(i);
+//            else if (n < min) {
+//                min = n;
+//                result.clear();
+//                result.add(i);
+//            }
+//        }
+//        return intListToIntArray(result);
     }
     
-    /*
+   /*
     * Sums two numeric arrays element-wise.
     * If one of the summands has lower length than the other,
     * it will be extended to be of the same length, padded with zeroes.
     */
     public static double[] sum(double[] a1, double[] a2) {
-        int len1 = a1.length, len2 = a2.length;
-        if (len1 < len2) return sum(a2, a1);
-        if (len2 < len1) {
-            a2 = Arrays.copyOf(a2, len1);
-            a2 = applyFunction(a2, (n, i) -> i < len2 ? n : 0);
-        }
-        double[] result = new double[len1];
-        for (int i = 0; i < len1; i++) result[i] = a1[i] + a2[i];
-        return result;
-    }
-    public static int[] sum(int[] a1, int[] a2) {
-        int len1 = a1.length, len2 = a2.length;
-        if (len1 < len2) return sum(a2, a1);
-        if (len2 < len1) {
-            a2 = Arrays.copyOf(a2, len1);
-            a2 = applyFunction(a2, (n, i) -> i < len2 ? n : 0);
-        }
-        int[] result = new int[len1];
-        for (int i = 0; i < len1; i++) result[i] = a1[i] + a2[i];
-        return result;
+        return IntStream.range(0, maximum(a1.length, a2.length))
+            .mapToDouble(i -> (i < a1.length ? a1[i] : 0) + (i < a2.length ? a2[i] : 0))
+            .toArray();
+//        int len1 = a1.length, len2 = a2.length;
+//        if (len1 < len2) return sum(a2, a1);
+//        if (len2 < len1) {
+//            a2 = Arrays.copyOf(a2, len1);
+//            a2 = applyFunction(a2, (n, i) -> i < len2 ? n : 0);
+//        }
+//        double[] result = new double[len1];
+//        for (int i = 0; i < len1; i++) result[i] = a1[i] + a2[i];
+//        return result;
+//    }
+//    public static int[] sum(int[] a1, int[] a2) {
+//        int len1 = a1.length, len2 = a2.length;
+//        if (len1 < len2) return sum(a2, a1);
+//        if (len2 < len1) {
+//            a2 = Arrays.copyOf(a2, len1);
+//            a2 = applyFunction(a2, (n, i) -> i < len2 ? n : 0);
+//        }
+//        int[] result = new int[len1];
+//        for (int i = 0; i < len1; i++) result[i] = a1[i] + a2[i];
+//        return result;
     }
     
     /*
@@ -931,26 +947,32 @@ public class CalcUtil {
     * it will be extended to be of the same length, padded with ones.
     */
     public static double[] mult(double[] a1, double[] a2) {
-        int len1 = a1.length, len2 = a2.length;
-        if (len1 < len2) return mult(a2, a1);
-        if (len2 < len1) {
-            a2 = Arrays.copyOf(a2, len1);
-            a2 = applyFunction(a2, (n, i) -> i < len2 ? n : 1);
-        }
-        double[] result = new double[len1];
-        for (int i = 0; i < len1; i++) result[i] = a1[i] * a2[i];
-        return result;
+        return IntStream.range(0, maximum(a1.length, a2.length))
+            .mapToDouble(i -> (i < a1.length ? a1[i] : 1) * (i < a2.length ? a2[i] : 1))
+            .toArray();
+//        int len1 = a1.length, len2 = a2.length;
+//        if (len1 < len2) return mult(a2, a1);
+//        if (len2 < len1) {
+//            a2 = Arrays.copyOf(a2, len1);
+//            a2 = applyFunction(a2, (n, i) -> i < len2 ? n : 1);
+//        }
+//        double[] result = new double[len1];
+//        for (int i = 0; i < len1; i++) result[i] = a1[i] * a2[i];
+//        return result;
     }
     public static int[] mult(int[] a1, int[] a2) {
-        int len1 = a1.length, len2 = a2.length;
-        if (len1 < len2) return mult(a2, a1);
-        if (len2 < len1) {
-            a2 = Arrays.copyOf(a2, len1);
-            a2 = applyFunction(a2, (n, i) -> i < len2 ? n : 1);
-        }
-        int[] result = new int[len1];
-        for (int i = 0; i < len1; i++) result[i] = a1[i] * a2[i];
-        return result;
+        return IntStream.range(0, maximum(a1.length, a2.length))
+            .map(i -> (i < a1.length ? a1[i] : 1) * (i < a2.length ? a2[i] : 1))
+            .toArray();
+//        int len1 = a1.length, len2 = a2.length;
+//        if (len1 < len2) return mult(a2, a1);
+//        if (len2 < len1) {
+//            a2 = Arrays.copyOf(a2, len1);
+//            a2 = applyFunction(a2, (n, i) -> i < len2 ? n : 1);
+//        }
+//        int[] result = new int[len1];
+//        for (int i = 0; i < len1; i++) result[i] = a1[i] * a2[i];
+//        return result;
     }
     
     // Calculates the scalar product of two numeric arrays, as if they were vectors of real numbers.
@@ -973,6 +995,23 @@ public class CalcUtil {
     // Multiplies all elements of a double[] array by a given double value.
     public static double[] multByScalar(double[] numberArray, double d) {return mult(numberArray, vectorOf(d, numberArray.length));}
     
+   /*
+    * Returns an array of doubles of size n+1, with initial value initValue,
+    * final value finValue, and each inner value being equally spaced by a step
+    * of (initValue + finValue)/n.
+    */
+    public static double[] partitionInterval(double initValue, double finValue, int n) {
+        double step = (finValue - initValue) / n;
+        double[] result = new double[n+1];
+        result[0] = initValue;
+        result[n] = finValue;
+        for (int i = 1; i < n; i++) {
+            initValue += step;
+            result[i] = initValue;
+        }
+        return result;
+    }
+    
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Function Methods">
@@ -993,7 +1032,7 @@ public class CalcUtil {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Root Finder Methods">
-    /*
+   /*
     * Contains two numerical methods for finding the root of a given number function:
     *
     *   The bisection method, which requires the lower and upper bound of an interval
@@ -1006,7 +1045,7 @@ public class CalcUtil {
     */
     
     
-    /*
+   /*
     * The Bisection Method behaves this way:
     *
     * Two bounds a and b of a real interval are given, such that the function f
@@ -1048,7 +1087,7 @@ public class CalcUtil {
         return a;
     }
     
-    /*
+   /*
     * The Root Finder Method behaves simply:
     * We try to apply the nextStep function passed as argument to calculate the
     * value of x for the next iteration. If doing that throws any exception,
@@ -1082,7 +1121,14 @@ public class CalcUtil {
             }
             if (printIterations) System.out.printf("| %d\t| %.8f\t| %.8f\t|\n", counter, x, f.apply(x));
             counter++;
-            if (Double.isNaN(x)) return Double.NaN;
+            if (Double.isNaN(x)) {
+                if (printIterations) System.out.println("NaN value reached");
+                return Double.NaN;
+            }
+            if (Double.isInfinite(x)) {
+                if (printIterations) System.out.println("Infinite value reached");
+                return Double.NaN;
+            }
         }
         if (printIterations && counter >= maxit) System.out.println("Maximum number of iterations reached.");
         return x;
@@ -1294,8 +1340,6 @@ public class CalcUtil {
     *   Midpoint Rule
     *   Trapezoidal Rule
     *   Simpson's Rule
-    *
-    * TO DO: testing
     */
     
     public static double midpointRule(
@@ -1309,6 +1353,10 @@ public class CalcUtil {
         for (int i = 0; i < coefficients.length; i++) coefficients[i] = 1;
         double step = (upperBound - lowerBound)/n;
         return step * scalarProduct(applyFunction(interval, x -> f.apply(x)), coefficients);
+//        return IntStream.range(0, interval.length)
+//            .mapToDouble(i -> f.apply(interval[i])*coefficients[i])
+//            .sum()
+//            *step;
     }
     
     public static double trapezoidalRule(
@@ -1346,7 +1394,7 @@ public class CalcUtil {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Gradient Descent">
-    /*
+   /*
     * Implements the gradient descent method to calculate the minimum of a
     * multivalued real function, represented by a Function from double[] to
     * Double.
@@ -1367,7 +1415,7 @@ public class CalcUtil {
     */
     
     
-    /*
+   /*
     * Constructs a multivalued quadratic function from the given matrix A
     * and vector b. The formula of such a function is:
     * J(x) = 1/2 x'Ax - b'x
@@ -1409,30 +1457,13 @@ public class CalcUtil {
     // <editor-fold defaultstate="collapsed" desc="ODE resolution">
     // TO DO: Description, general work in the current methods and add new ones.
     
-    /*
-    * Returns an array of doubles of size n+1, with initial value initValue,
-    * final value finValue, and each inner value being equally spaced by a step
-    * of (initValue + finValue)/n.
-    */
-    public static double[] partitionInterval(double initValue, double finValue, int n) {
-        double step = (initValue + finValue) / n;
-        double[] result = new double[n+1];
-        result[0] = initValue;
-        result[n] = finValue;
-        for (int i = 1; i < n; i++) {
-            initValue += step;
-            result[i] = initValue;
-        }
-        return result;
-    }
-    
     public static void printGraphData(double[] x, double[] y) {
         if (x.length != y.length) return;
         System.out.println("| x \t\t| y \t\t|");
         for (int i = 0; i < x.length; i++) System.out.printf("| %8f \t| %8f \t|\n", x[i], y[i]);
     }
     
-    /*
+   /*
     * Solves the fixed point problem of finding the value x such that f(x) = x,
     * with a precision of eps, and starting to iterate on a certain initValue.
     * maxit is the highest number of iterations the method will perform before
@@ -1454,7 +1485,7 @@ public class CalcUtil {
     }
     public static double fixedPoint(Function<Double, Double> f, double initValue, double eps, int maxit) {return fixedPoint(f, initValue, eps, maxit, false);}
     
-    /*
+   /*
     * Solves an ODE of the form y' = f(x, y) on an interval [initValue, finValue]
     * with initial condition y(initValue) = initCondition. Returns an array of doubles
     * that is the approximation of the solution when evaluated on each of the
@@ -1479,7 +1510,7 @@ public class CalcUtil {
         return y;
     }
     
-    /* WIP, not working properly
+   /* WIP, not working properly
     * Solves an ODE of the form y' = f(x, y) on an interval [initValue, finValue]
     * with initial condition y(initValue) = initCondition. Returns an array of doubles
     * that is the approximation of the solution when evaluated on each of the
@@ -1502,9 +1533,10 @@ public class CalcUtil {
         double[] y = new double[n+1];
         y[0] = initCondition;
         for (int i = 1; i <= n; i++) {
-            int j = i;
-            Function<Double, Double> fixedPointFunction = z -> y[j-1] + step * f.apply(x[j], z);
-            y[i] = rootFinderMethod(z -> fixedPointFunction.apply(z) - z, Newton(fixedPointFunction), 1, 1e-6, 100, false);
+            double xIt = x[i];
+            double yIt = y[i-1];
+            Function<Double, Double> fixedPointFunction = z -> yIt + step * f.apply(xIt, z);
+            y[i] = rootFinderMethod(z -> fixedPointFunction.apply(z) - z, Newton(fixedPointFunction), yIt, 1e-6, 100, false);
         }
         return y;
         
@@ -1527,7 +1559,7 @@ public class CalcUtil {
     * WIP section. For now, only the solveLinearSystem is succesfuly implemented.
     */
     
-    /*
+   /*
     * Solves a Linear System of equations with matricial form Ax = b, where
     * A is a n x n matrix of real numbers, b is a n-dimensional real vector
     * and x is a n-dimensional array of unknowns, which will be returned
