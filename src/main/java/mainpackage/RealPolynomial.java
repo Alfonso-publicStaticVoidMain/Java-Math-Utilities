@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 
 public class RealPolynomial {
-    /*
+   /*
     * Class I created to work with polynomials of real numbers.
     * A subclass RealMonomial was also created to more easily implement
     * certain methods that'd be easier to do with monomials than with
@@ -13,13 +13,14 @@ public class RealPolynomial {
     * methods work with polynomials too.
     */
     
-    /*
+   /*
     * The degree of a polynomial is the highest exponent that as a nonzero
     * coefficient. It will always be equal to the size of the coefficients
     * array minus 1.
     */
     private int degree;
-    /*
+    
+   /*
     * The coefficients of a polynomial will be stored on a double[] array.
     * To prevent having irrelevant zeros on the end of it, a function named
     * deleteLastZeros has been created and is called each time a polynomial is
@@ -27,7 +28,7 @@ public class RealPolynomial {
     */
     private double[] coef;
     
-    /*
+   /*
     * The two main constructors consist on passing each coefficient stored on
     * a double[] array, a List<Double>, or simply separated by commas.
     */
@@ -47,7 +48,7 @@ public class RealPolynomial {
         this.degree = coef.length - 1;
     }
     
-    /*
+   /*
     * Returns the coefficient in the i-th position.
     * If i is negative, returns NaN.
     * If i is greater than the degree of the polynomial, always returns 0.
@@ -79,7 +80,7 @@ public class RealPolynomial {
         else return new double[] {0d};
     }
         
-    /*
+   /*
     * Method used to check whether or not a polynomial can be cast to a monomial.
     * The following information can be extracted from the return of this method:
     * -2 -> All coefficients are 0, hence it's the zero polynomial, which can be cast to a trivial monomial.
@@ -101,7 +102,7 @@ public class RealPolynomial {
         return index;
     }
     
-    /*
+   /*
     * Attempts to "cast" this polynomial to a monomial if able.
     * If the object can be cast to a monomial, returns the monomial object that represents it.
     * If it can't, returns the same object.
@@ -115,7 +116,7 @@ public class RealPolynomial {
         }
     }
     
-    /*
+   /*
     * Returns the monomial of the given degree in the monomial decomposition
     * of this polynomial.
     */
@@ -124,18 +125,19 @@ public class RealPolynomial {
         catch (Exception e) {return new RealMonomial(0, 0);}
     }
     
-    /*
+   /*
     * Returns the result of adding p to this polynomial.
     * Attempts to cast the result to a monomial if able to retain the methods of
     * that class in case the result is used in future operations.
     */
     public RealPolynomial sum(RealPolynomial p) {
-        double[] resultCoef = new double[Math.max(this.degree, p.degree)+1];
-        for (int i = 0; i < resultCoef.length; i++) {
-            if (i < this.coef.length && i < p.coef.length) resultCoef[i] = this.coef[i] + p.coef[i];
-            else if (i < this.coef.length && i >= p.coef.length) resultCoef[i] = this.coef[i];
-            else if (i >= this.coef.length && i < p.coef.length) resultCoef[i] = p.coef[i];
-        }
+//        double[] resultCoef = new double[Math.max(this.degree, p.degree)+1];
+//        for (int i = 0; i < resultCoef.length; i++) {
+//            if (i < this.coef.length && i < p.coef.length) resultCoef[i] = this.coef[i] + p.coef[i];
+//            else if (i < this.coef.length && i >= p.coef.length) resultCoef[i] = this.coef[i];
+//            else if (i >= this.coef.length && i < p.coef.length) resultCoef[i] = p.coef[i];
+//        }
+        double[] resultCoef = CalcUtil.sum(this.coef, p.coef);
         return new RealPolynomial(resultCoef).castToMonomial();
     }
     
@@ -149,7 +151,7 @@ public class RealPolynomial {
     // Returns the result of substracting p from this polynomial.
     public RealPolynomial substr(RealPolynomial p) {return this.sum(p.invertSign());}
     
-    /*
+   /*
     * Returns the result of multiplying p to this polynomial.
     * To compute that, this same method is called on each monomial of the monomial
     * decomposition of this, and that result is recursively summed, because the
@@ -161,7 +163,7 @@ public class RealPolynomial {
         return result;
     }
     
-    /*
+   /*
     * Returns the result of taking the n-th power of this polynomial,
     * recursively calling the mult method.
     */
@@ -171,7 +173,7 @@ public class RealPolynomial {
         return result;
     }
     
-    /*
+   /*
     * Returns the polynomial that represents the derivative of this with respect
     * to its variable. If the int n parameter is present, it calculates the
     * n-th derivative.
@@ -189,9 +191,9 @@ public class RealPolynomial {
         return result;
     }
     
-    /*
+   /*
     * Returns the polynomial that represents the antiderivative of this polynomial
-    * with respect to its variable.
+    * with respect to its variable. Assumes a constant coefficient of zero.
     */
     public RealPolynomial antiDerivative() {
         RealPolynomial result = new RealMonomial(0);
@@ -221,7 +223,7 @@ public class RealPolynomial {
         return str;
     }
     
-    // Evaluates this polynomial on a double value d.
+    // Evaluates this polynomial on a double value x.
     public double evaluate(double x) {
         double result = 0;
         for (int i = 0; i <= this.degree; i++) result += this.getCoefficient(i) * Math.pow(x, i);
@@ -234,14 +236,14 @@ public class RealPolynomial {
 } // Fin class RealPolynomial
 
 class RealMonomial extends RealPolynomial {
-    /* 
+   /* 
     * A monomial is a polynomial with only one nonzero coefficient, that being
     * the one in the position of its degree. That coefficient will be stored
     * in the mainCoef double attribute.
     */
     private double mainCoef;
     
-    /*
+   /*
     * The main constructor uses a monomialArray method which constructs a
     * double[] array to properly represent the monomial as a RealPolynomial object.
     */
@@ -255,7 +257,7 @@ class RealMonomial extends RealPolynomial {
 
     public double getMainCoef() {return this.mainCoef;}
     
-    /*
+   /*
     * This method creates a double[] array with all zeros except the number in
     * the n-th position, which takes the value passed as parameter.
     */
@@ -269,7 +271,7 @@ class RealMonomial extends RealPolynomial {
         return coefArray;
     }
     
-    /*
+   /*
     * Returns the result of adding p to this monomial.
     * If p is a monomial of the same degree, the method will return a monomial
     * with the same degree and the sum of their main coefficients.
@@ -288,7 +290,7 @@ class RealMonomial extends RealPolynomial {
         return new RealPolynomial(resultCoef).castToMonomial();
     }
     
-    /* 
+   /* 
     * Returns the result of multiplying p to this monomial.
     * If p is also a monomial, this method will return a monomial with the product
     * of their degrees and the product of their main coefficients.
@@ -308,7 +310,7 @@ class RealMonomial extends RealPolynomial {
         return new RealPolynomial(resultCoef);
     }
     
-    /*
+   /*
     * Returns the monomial that represents the derivative of this monomial
     * with respect to its variable.
     */
@@ -317,7 +319,7 @@ class RealMonomial extends RealPolynomial {
         return this.getDegree() == 0 ? new RealMonomial(0, 0) : new RealMonomial(this.getDegree() * this.mainCoef, this.getDegree() - 1);
     }
     
-    /*
+   /*
     * Returns the monomial that represents the antiderivative of this monomial
     * with respect to its variable.
     */
