@@ -29,5 +29,29 @@ public class TestClass {
 //        System.out.println("Midpoint rule: " + CalcUtil.midpointRule(f, lowerBound, upperBound, n));
 //        System.out.println("Trapezoidal rule: " + CalcUtil.trapezoidalRule(f, lowerBound, upperBound, n));
 //        System.out.println("Simpson's rule: " + CalcUtil.SimpsonRule(f, lowerBound, upperBound, n));
+
+
+
+        //Function<Double, Double> f = x -> Math.pow(Math.E, x) - Math.pow(x, 2);
+        RealPolynomial f = new RealPolynomial(3, -2.333333333333333, 0.666666666666, 0.333333333);
+        double x0 = -1, x = -1.5;
+        double eps = 1e-8;
+        int maxit = 100;
+        double root;
+        root = CalcUtil.secantMethod(f, x0, x, eps, maxit, true);
+        System.out.println("Root found with Secant Method: " + root);
+        System.out.println("------------------------------------------------------------------------");
+        root = CalcUtil.rootFinderMethod(f, CalcUtil.Newton(f), x, eps, maxit, true);
+        System.out.println("Root found with Newton Method: " + root);
+        System.out.println("------------------------------------------------------------------------");
+        root = CalcUtil.rootFinderMethod(f, CalcUtil.Halley(f), x, eps, maxit, true);
+        System.out.println("Root found with Halley Method: " + root);
+//        System.out.println("------------------------------------------------------------------------");
+//        root = CalcUtil.rootFinderMethod(f, CalcUtil.Householder(f), x, eps, maxit, true);
+//        System.out.println("Root found with Householder Method: " + root);
+        System.out.println("------------------------------------------------------------------------");
+        root = CalcUtil.rootFinderMethod(f, CalcUtil.compoundHouseholder(f), x, eps, maxit, true);
+        System.out.println("Root found with compound Householder Method: " + root);
+        System.out.println("------------------------------------------------------------------------");
     }
 }
