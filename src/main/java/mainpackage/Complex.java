@@ -1,7 +1,7 @@
 package mainpackage;
 
 public class Complex {
-    /*
+   /*
     * Class for working with Complex numbers, using my RealNumber and Rational
     * Each complex number will have a real and imaginary part, stored in an
     * object of RealNumber. Note that they can also be Rational numbers, and
@@ -11,7 +11,7 @@ public class Complex {
     private RealNumber real;
     private RealNumber img;
     
-    /*
+   /*
     * The main constructor takes any combination of two real number objects and/or
     * double values to store them as real and imaginary parts of the new complex.
     * The empty constructor returns a complex number with NaN as real and img parts.
@@ -38,18 +38,18 @@ public class Complex {
     }
 
     // Getters and setters. re() and im() get the value of the real and img parts.
-    public RealNumber getReal() {return real;}
-    public void setReal(RealNumber real) {this.real = real;}
-    public double re() {return this.real.getValue();}
-    public RealNumber getImg() {return img;}
-    public void setImg(RealNumber img) {this.img = img;}
-    public double im() {return this.img.getValue();}
+    public RealNumber getReal()             {return real;}
+    public void setReal(RealNumber real)    {this.real = real;}
+    public double re()                      {return this.real.getValue();}
+    public RealNumber getImg()              {return img;}
+    public void setImg(RealNumber img)      {this.img = img;}
+    public double im()                      {return this.img.getValue();}
     
     // Returns a complex number representing a real, rational, or integer number.
-    public static Complex toComplex(RealNumber r) {return new Complex(r, 0);}
-    public static Complex toComplex(double d) {return new Complex(d, 0);}
-    public static Complex toComplex(Rational r) {return new Complex(r, 0);}
-    public static Complex toComplex(int n) {return new Complex(n, 0);}
+    public static Complex toComplex(RealNumber r)   {return new Complex(r, 0);}
+    public static Complex toComplex(double d)       {return new Complex(d, 0);}
+    public static Complex toComplex(Rational r)     {return new Complex(r, 0);}
+    public static Complex toComplex(int n)          {return new Complex(n, 0);}
     
     @Override
     public String toString() {
@@ -99,7 +99,7 @@ public class Complex {
         return Double.NaN;
     }
     
-    // Returns the principal value of this.
+    // Returns the principal value of this Complex Number.
     public double getPrincipalValue() {return atan2(this.im(), this.re());}
     
 }
