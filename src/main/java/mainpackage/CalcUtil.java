@@ -1045,6 +1045,32 @@ public class CalcUtil {
     */
     
     
+    // TO DO: description and testing
+    public static double falsePositionMethod(
+        Function<Double, Double> f, // Function we want to find a root of.
+        double a,                   // Lower bound of the starting interval.
+        double b,                   // Upper bound of the starting interval. It must be true that f(a) * f(b) < 0, or NaN will be returned.
+        double eps,                 // Distance from 0 that we deem acceptable to stop the method.
+        int maxit,                  // Maximum number of iterations.
+        boolean printIterations     // State parameter to print the results of each iteration or not.
+    ) {
+        if (printIterations) {
+            System.out.println("| it\t| a\t\t| b\t\t| f(a)\t\t| f(b)\t\t|");
+            System.out.printf("| %d\t| %.8f\t| %.8f\t| %.8f\t| %.8f\t|\n", 0, a, b, f.apply(a), f.apply(b));
+        }
+        if (f.apply(a)*f.apply(b) > 0) return Double.NaN;
+        for (int n = 0; n <= maxit; n++) {
+            double c = (a * f.apply(b) - b * f.apply(a)) / (f.apply(b) - f.apply(a));
+            if (f.apply(c) * f.apply(a) < 0) b = c;
+            else if (f.apply(c) * f.apply(b) < 0) a = c;
+            if (printIterations) System.out.printf("| %d\t| %.8f\t| %.8f\t| %.8f\t| %.8f\t|\n", n, a, b, f.apply(a), f.apply(b));
+            if (Math.abs(f.apply(c)) < eps) return c;
+        }
+        if (printIterations) System.out.println("Maximum number of iterations reached.");
+        return a;
+    }
+    
+    
    /*
     * The Bisection Method behaves this way:
     *
@@ -1134,7 +1160,7 @@ public class CalcUtil {
         return x;
     }
     
-    /*
+   /*
     * The following two methods are versions adapted to expect an object of the
     * RealPolynomial and RationalFunction classes, also made by me, using their
     * method .toFunction() to interpret them as Double -> Double functions.
@@ -1161,6 +1187,79 @@ public class CalcUtil {
         int maxit,                          // Maximum number of iterations.
         boolean printIterations             // State parameter to print the results of each iteration or not.     
     ) {return rootFinderMethod(r.toFunction(), nextStep, x, eps, maxit, printIterations);}
+    
+    
+    // TO DO: description and testing
+    public static double secantMethod(
+        Function<Double, Double> f,         // Function we want to find a root of.
+        double x0,                          // Starting value 0.
+        double x,                           // Starting value 1.
+        double eps,                         // Distance from 0 that we deem acceptable to stop the method.
+        int maxit,                          // Maximum number of iterations.
+        boolean printIterations             // State parameter to print the results of each iteration or not.
+    ) {
+        int counter = 2;
+        if (printIterations) {
+            System.out.printf("Finding roots of the function: " + f + "\nWith initial values %.2f and %.2f\nAnd precision, %.0E\n", x0, x, eps);
+            System.out.println("| it\t| x\t\t| f(x)\t\t|");
+            System.out.printf("| %d\t| %.8f\t| %.8f\t|\n", 1, x0, f.apply(x0));
+            System.out.printf("| %d\t| %.8f\t| %.8f\t|\n", 0, x, f.apply(x));
+        }
+        while (Math.abs(f.apply(x)) > eps && counter < maxit) {
+            try {
+                double x1 = (x0 * f.apply(x) - x * f.apply(x0)) / (f.apply(x) - f.apply(x0));
+                x0 = x;
+                x = x1;
+            }
+            catch (Exception e) {
+                if (printIterations) System.out.println("Error while calculating iteration " + counter);
+                return Double.NaN;
+            }
+            if (printIterations) System.out.printf("| %d\t| %.8f\t| %.8f\t|\n", counter, x, f.apply(x));
+            counter++;
+            if (Double.isNaN(x)) {
+                if (printIterations) System.out.println("NaN value reached");
+                return Double.NaN;
+            }
+            if (Double.isInfinite(x)) {
+                if (printIterations) System.out.println("Infinite value reached");
+                return Double.NaN;
+            }
+        }
+        if (printIterations && counter >= maxit) System.out.println("Maximum number of iterations reached.");
+        return x;
+    }
+    public static double secantMethod(
+        RealPolynomial p,           // Polynomial we want to find a root of.
+        double x0,                  // Starting value 0.
+        double x,                   // Starting value 1.
+        double eps,                 // Distance from 0 that we deem acceptable to stop the method.
+        int maxit,                  // Maximum number of iterations.
+        boolean printIterations     // State parameter to print the results of each iteration or not.
+    ) {return secantMethod(p.toFunction(), x0, x, eps, maxit, printIterations);}
+    public static double secantMethod(
+        RationalFunction r,         // Rational function we want to find a root of.
+        double x0,                  // Starting value 0.
+        double x,                   // Starting value 1.
+        double eps,                 // Distance from 0 that we deem acceptable to stop the method.
+        int maxit,                  // Maximum number of iterations.
+        boolean printIterations     // State parameter to print the results of each iteration or not.
+    ) {return secantMethod(r.toFunction(), x0, x, eps, maxit, printIterations);}
+    
+    
+    // https://en.wikipedia.org/wiki/Aberth_method
+    // Aberth Method
+    public static double[] AberthMethod(
+        RealPolynomial p,           // Polynomial we want to find a root of.
+        double eps,                 // Distance from 0 that we deem acceptable to stop the method.
+        int maxit,                  // Maximum number of iterations.
+        boolean printIterations     // State parameter to print the results of each iteration or not.
+    ) {
+        // TO DO
+        double[] solutions = new double[p.getDegree()];
+        
+        return solutions;
+    }
     
     // </editor-fold>
     
@@ -1191,6 +1290,7 @@ public class CalcUtil {
     public static Function<Double, Double> Halley(RationalFunction r) {return x -> x - 2*r.evaluate(x)*r.diff().evaluate(x)/(2*Math.pow(r.diff().evaluate(x), 2) - r.evaluate(x)*r.diff(2).evaluate(x));}
     public static Function<Double, Double> Halley(Function<Double, Double> f) {return x -> x - 2*f.apply(x)*derivativeAt(f, x)/(2*Math.pow(derivativeAt(f, x), 2) - f.apply(x)*derivativeAt(f, x, 2));}
     // Householder's Method equation: HH(x) = x - (6f(x)f'(x)^2 - 3f(x)^2f''(x)) / (6f'(x)^3 - 6f(x)f'(x)f''(x) + f(x)^2f'''(x)
+    // TO DO: Not working properly. More testing is needed
     public static Function<Double, Double> Householder(RealPolynomial p) {return x -> x - (6*p.evaluate(x)*Math.pow(p.diff().evaluate(x), 2) - 3*Math.pow(p.evaluate(x), 2)*p.diff(2).evaluate(x)) / (6*Math.pow(p.diff().evaluate(x), 3) - 6*p.evaluate(x)*p.diff().evaluate(x)*p.diff(2).evaluate(x) + Math.pow(p.evaluate(x), 2)*p.diff(3).evaluate(x));}
     public static Function<Double, Double> Householder(RationalFunction r) {return x -> x - (6*r.evaluate(x)*Math.pow(r.diff().evaluate(x), 2) - 3*Math.pow(r.evaluate(x), 2)*r.diff(2).evaluate(x)) / (6*Math.pow(r.diff().evaluate(x), 3) - 6*r.evaluate(x)*r.diff().evaluate(x)*r.diff(2).evaluate(x) + Math.pow(r.evaluate(x), 2)*r.diff(3).evaluate(x));}
     public static Function<Double, Double> Householder(Function<Double, Double> f) {return x -> (6*f.apply(x)*Math.pow(derivativeAt(f, x), 2) - 3*Math.pow(f.apply(x), 2)*derivativeAt(f, x, 2)) / (6*Math.pow(derivativeAt(f, x), 3) - 6*f.apply(x)*derivativeAt(f, x)*derivativeAt(f, x, 2) + Math.pow(f.apply(x), 2)*derivativeAt(f, x, 3));}
@@ -1207,7 +1307,7 @@ public class CalcUtil {
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Derivatives">
-    /*
+   /*
     * Contains only three distinctly named methods:
     *   derivativeAt: Calculates an approximation of the derivative of a number function at a given point using the finite difference method.
     *   derivative: Returns a Function<Double, Double> approximation of the derivative of a function, using the previous method to calculate the derivative at each point.
@@ -1215,10 +1315,10 @@ public class CalcUtil {
     */
     
     
-    /*
-    * Approximates the value of a real function f: R -> R (passed as a Function
-    * from Double to Double), at a point x, with a step h, and a given accuracy
-    * and order.
+   /*
+    * Approximates the value of the derivative of a real function f: R -> R
+    * (passed as a Function<Double, Double> object, at a point x,
+    * with a step h, and a given accuracy and order.
     *
     * Accuracy accepts the values 2, 4, 6 or 8, otherwise it will return NaN.
     * Order can be from 0 to 6. Higher values will return NaN.
@@ -1286,11 +1386,11 @@ public class CalcUtil {
         int order                   // Order of the derivative. A value of 0 would simply return the function f.
     ) {return x -> derivativeAt(f, x, h, order);}
     
-    /*
+   /*
     * The following method prints the value calculated with the analytic
-    * calculation of the derivative of a polynomial, of the RealPolynomial class,
+    * calculation of the derivative of a polynomial, (a RealPolynomial object),
     * and the numerical derivative approximated by the finite difference method,
-    * as implemented in this section.
+    * as implemented before in this section.
     *
     * It shows the value of both derivative calculations, the absolute difference 
     * between those values, and the relative difference.
