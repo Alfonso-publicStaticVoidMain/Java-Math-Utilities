@@ -998,7 +998,7 @@ public class CalcUtil {
    /*
     * Returns an array of doubles of size n+1, with initial value initValue,
     * final value finValue, and each inner value being equally spaced by a step
-    * of (initValue + finValue)/n.
+    * of (initValue - finValue)/n.
     */
     public static double[] partitionInterval(double initValue, double finValue, int n) {
         double step = (finValue - initValue) / n;
