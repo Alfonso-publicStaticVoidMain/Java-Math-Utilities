@@ -2,7 +2,8 @@ package mainpackage;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.*;
+import java.util.stream.*;
 
 public class RealPolynomial {
    /*
@@ -225,13 +226,29 @@ public class RealPolynomial {
     
     // Evaluates this polynomial on a double value x.
     public double evaluate(double x) {
-        double result = 0;
-        for (int i = 0; i <= this.degree; i++) result += this.getCoefficient(i) * Math.pow(x, i);
-        return result;
+        return IntStream.range(0, this.getCoef().length)
+            .mapToDouble(i -> this.getCoef()[i] * Math.pow(x, i))
+            .sum();     
+//        double result = 0;
+//        for (int i = 0; i <= this.degree; i++) result += this.getCoefficient(i) * Math.pow(x, i);
+//        return result;
     }
     
     // Returns the polynomial viewed as a real function.
     public Function<Double, Double> toFunction() {return x -> this.evaluate(x);}
+    
+   /*
+    * Returns a double value which is an upper bound for the absolute value of
+    * the roots of the polynomial, given the fact that for roots x of a
+    * polynomial p with principal coefficient 1, it holds that:
+    * |x| <= max(1, |a_{n-1}|, ..., |a_0|)
+    */
+    public double rootBound() {
+        return Math.max(1, DoubleStream.of(this.getCoef())
+            .map(d -> Math.abs(d / this.getCoefficient(this.getDegree())))
+            .max()
+            .getAsDouble());
+    }
     
 } // Fin class RealPolynomial
 
