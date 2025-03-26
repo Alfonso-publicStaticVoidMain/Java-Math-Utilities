@@ -20,6 +20,15 @@ public class MonomialFunction extends PolynomialFunction {
         return mainCoef*Math.pow(x, degree);
     }
     
+    @Override
+    public MonomialFunction derivative() {
+        return this.getDegree() == 0 ? new MonomialFunction(0, 0) : new MonomialFunction(this.getDegree() * this.mainCoef, this.getDegree() - 1);
+    }
+    
+    @Override
+    public MonomialFunction antiDerivative() {
+        return new MonomialFunction(this.mainCoef / (this.getDegree() + 1), this.getDegree() + 1);
+    }
     
     public static double[] monomialArray(double value, int n) {
         if (value == 0) return new double[] {0};
