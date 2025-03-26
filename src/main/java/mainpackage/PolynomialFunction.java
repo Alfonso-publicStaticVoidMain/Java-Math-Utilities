@@ -7,6 +7,7 @@ public class PolynomialFunction implements RealFunction {
     
     // The array element at position i represent the coefficient of degree i
     private final double[] coefficients;
+    private final int degree;
 
     public PolynomialFunction(double... coefficients) {
         int lastNonZeroIndex = -1;
@@ -16,12 +17,13 @@ public class PolynomialFunction implements RealFunction {
         }
         
         this.coefficients = lastNonZeroIndex == -1 ? new double[] {0} : Arrays.copyOfRange(coefficients, 0, lastNonZeroIndex);
+        this.degree = this.coefficients.length+1;
     }
 
     @Override
     public double apply(double x) {
         return IntStream.range(0, this.coefficients.length)
-            .mapToDouble(i -> this.coefficients[i] * Math.pow(x, i))
+            .mapToDouble(i -> i==0 ? this.coefficients[i] : this.coefficients[i] * Math.pow(x, i))
             .sum();
     }
 
@@ -35,7 +37,7 @@ public class PolynomialFunction implements RealFunction {
 
     @Override
     public PolynomialFunction beforeInvertSign() {
-        double[] newCoef = IntStream.of(0, this.coefficients.length)
+        double[] newCoef = IntStream.range(0, this.coefficients.length)
             .mapToDouble(i -> i%2==0 ? this.coefficients[i] : -this.coefficients[i])
             .toArray();
         return new PolynomialFunction(newCoef);
@@ -47,6 +49,18 @@ public class PolynomialFunction implements RealFunction {
             .map(a -> -a)
             .toArray();
         return new PolynomialFunction(newCoef);
+    }
+    
+    public PolynomialFunction antiDerivative() {
+        double[] newCoef = IntStream.range(0, this.coefficients.length+1)
+            .mapToDouble(i -> i==0 ? 0 : this.coefficients[i-1]/i)
+            .toArray();
+        return new PolynomialFunction(newCoef);
+    }
+    
+    public double integrate(double lowerBound, double upperBound) {
+        PolynomialFunction antiDerivative = this.antiDerivative();
+        return antiDerivative.apply(upperBound) - antiDerivative.apply(lowerBound);
     }
     
 }
