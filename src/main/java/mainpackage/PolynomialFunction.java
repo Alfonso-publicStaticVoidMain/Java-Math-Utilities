@@ -20,6 +20,14 @@ public class PolynomialFunction implements RealFunction {
         this.degree = this.coefficients.length+1;
     }
 
+    public double[] getCoefficients() {
+        return coefficients;
+    }
+
+    public int getDegree() {
+        return degree;
+    }
+
     @Override
     public double apply(double x) {
         return IntStream.range(0, this.coefficients.length)
