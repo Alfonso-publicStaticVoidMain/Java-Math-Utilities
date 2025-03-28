@@ -46,7 +46,7 @@ public interface RealFunction {
     
     public static RealFunction identity() {return x -> x;}    
     public static RealFunction invertSign() {return x -> -x;}
-    public static RealFunction multInverse() {return x -> 1/x;}    
+    public static RealFunction multInverse() {return x -> 1/x;}
     
     default RealFunction sum(RealFunction f) {return x -> this.apply(x)+f.apply(x);}
     default RealFunction mult(RealFunction f) {return x -> this.apply(x)*f.apply(x);}
